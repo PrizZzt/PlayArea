@@ -20,5 +20,7 @@ class session_t : public std::enable_shared_from_this<session_t>
 
 public:
     session_t(boost::asio::ip::tcp::socket _socket, server_t *_server);
+    ~session_t();
+
     void start();
 };
