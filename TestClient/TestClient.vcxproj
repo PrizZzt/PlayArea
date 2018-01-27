@@ -156,10 +156,12 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="client_t.cpp" />
+    <ClCompile Include="console_helper_t.cpp" />
     <ClCompile Include="TestClient.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="client_t.h" />
+    <ClInclude Include="console_helper_t.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -1,5 +1,6 @@
 #include <memory>
 #include <iostream>
+#include <ctime>
 
 #include "server_t.h"
 
@@ -11,6 +12,50 @@ void server_t::update_func()
 
         map.update();
         map.fill_map_string(map_string);
+
+		// TO DELETE
+		HANDLE output_handle = GetStdHandle(STD_OUTPUT_HANDLE);
+		COORD coord = { 0 };
+		CONSOLE_SCREEN_BUFFER_INFO cBufferInfo;
+		DWORD dwI;
+		DWORD dwSize;
+
+		if (output_handle == INVALID_HANDLE_VALUE) return;
+		if (GetConsoleScreenBufferInfo(output_handle, &cBufferInfo))
+		{
+			dwSize = cBufferInfo.dwSize.X * cBufferInfo.dwSize.Y;
+			FillConsoleOutputCharacter(output_handle, TEXT(' '), dwSize, coord, &dwI);
+			SetConsoleCursorPosition(output_handle, coord);
+		}
+
+		time_t t = time(0);
+		tm now;
+		localtime_s(&now, &t);
+		std::cout << now.tm_hour << ":" << now.tm_min << ":" << now.tm_sec << std::endl;
+
+		for (uint32_t i = 2; i < map_string_length; i++)
+		{
+			switch (map_string[i])
+			{
+			case 0:
+				std::cout << ' ';
+				break;
+
+			case 1:
+				std::cout << '*';
+				break;
+
+			case 2:
+			case 3:
+				std::cout << '#';
+				break;
+
+			default:
+				std::cout << (char)map_string[i];
+				break;
+			}
+			if ((i - 1) % map.get_size_x() == 0)std::cout << std::endl;
+		}
     }
 }
 
@@ -66,9 +111,9 @@ player_t *server_t::get_player(char *_login, char *_password)
     {
         players[players_count] = new player_t(_login, _password, new_object);
         players_count++;
+
+		return players[players_count - 1];
     }
     else
         return nullptr; // Не удалось создать объект на карте - учетку игрока тоже не будем создавать
-
-    return players[players_count];
 }
