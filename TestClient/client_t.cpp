@@ -5,30 +5,49 @@ void client_t::recv_func()
 {
 	uint32_t new_length;
 
+    uint8_t server_action;
+    uint8_t result_code;
 	while (is_recv_thread_running)
 	{
 		try
 		{
-			if (boost::asio::read(socket, boost::asio::buffer(&size_x, 1)) == 0)continue;
+            if (boost::asio::read(socket, boost::asio::buffer(&server_action, 1)) == 0)continue;
 		}
 		catch (...)
 		{
 			continue;
 		}
-		if (boost::asio::read(socket, boost::asio::buffer(&size_y, 1)) == 0)continue;
+        switch (server_action)
+        {
+        case 1://MAP
+            if (boost::asio::read(socket, boost::asio::buffer(&size_x, 1)) == 0)continue;
+            if (boost::asio::read(socket, boost::asio::buffer(&size_y, 1)) == 0)continue;
 
-		new_length = size_x * size_y;
-		if (new_length != map_string_length)
-		{
-			if (map_string_length > 0)
-				delete[] map_string;
+            new_length = size_x * size_y;
+            if (new_length != map_string_length)
+            {
+                if (map_string_length > 0)
+                    delete[] map_string;
 
-			map_string_length = size_x * size_y;
-			map_string = new uint8_t[map_string_length];
-		}
+                map_string_length = size_x * size_y;
+                map_string = new uint8_t[map_string_length];
+            }
 
-		std::unique_lock<std::mutex> lock(map_string_mutex);
-		size_t reply_length = boost::asio::read(socket, boost::asio::buffer(map_string, map_string_length));
+            {
+                std::unique_lock<std::mutex> lock(map_string_mutex);
+                size_t reply_length = boost::asio::read(socket, boost::asio::buffer(map_string, map_string_length));
+            }
+            if (on_turn)on_turn();
+            break;
+
+        case 2://RESULT
+            if (boost::asio::read(socket, boost::asio::buffer(&result_code, 1)) == 0)continue;
+            break;
+
+        default:
+            if (on_error)on_error();
+            break;
+        }
 	}
 }
 

@@ -17,6 +17,7 @@ class server_t
 
     player_t *players[256];
     uint16_t  players_count;
+    std::list<std::shared_ptr<session_t>> sessions;
 
     std::thread update_thread;
     bool is_update_thread_running;
@@ -32,4 +33,9 @@ public:
     uint32_t  get_map_string_length() { return map_string_length; }
 
     player_t *get_player(char *_login, char *_password);
+
+    void detach_session(std::shared_ptr<session_t> _session)
+    {
+        sessions.remove(_session);
+    }
 };

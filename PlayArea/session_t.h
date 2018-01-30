@@ -12,6 +12,7 @@ class session_t : public std::enable_shared_from_this<session_t>
 {
     boost::asio::ip::tcp::socket socket;
     uint8_t data[MAX_LENGTH];
+    uint8_t result[2];
     server_t *server;
     player_t *player;
 
@@ -23,4 +24,5 @@ public:
     ~session_t();
 
     void start();
+    void send_map(uint8_t *_map, uint32_t _map_lenght);
 };

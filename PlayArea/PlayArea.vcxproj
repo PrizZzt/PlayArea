@@ -161,12 +161,13 @@
     <ClCompile Include="session_t.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="action_e.h" />
+    <ClInclude Include="server_action_e.h" />
     <ClInclude Include="contstants.h" />
     <ClInclude Include="map_t.h" />
     <ClInclude Include="object_s.h" />
     <ClInclude Include="object_type_e.h" />
     <ClInclude Include="player_t.h" />
+    <ClInclude Include="client_action_e.h" />
     <ClInclude Include="server_t.h" />
     <ClInclude Include="session_t.h" />
   </ItemGroup>

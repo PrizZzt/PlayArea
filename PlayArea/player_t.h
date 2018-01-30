@@ -18,7 +18,7 @@ public:
 
     char *get_player_name() { return login; }
     object_s *get_object() { return object; }
-	void set_object_action(action_e _action) { if (object)object->next_action = _action; }
+	void set_object_action(client_action_e _action) { if (object)object->next_action = _action; }
 
     bool check_credentials(char *_login, char *_password);
 };

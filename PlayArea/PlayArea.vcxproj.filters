@@ -44,13 +44,16 @@
     <ClInclude Include="object_type_e.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
-    <ClInclude Include="action_e.h">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
     <ClInclude Include="object_s.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
     <ClInclude Include="player_t.h">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
+    <ClInclude Include="server_action_e.h">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
+    <ClInclude Include="client_action_e.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
   </ItemGroup>

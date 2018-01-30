@@ -39,4 +39,7 @@ public:
     void right();
     void left();
     void act();
+
+    std::function<void()> on_turn = nullptr;
+    std::function<void()> on_error = nullptr;
 };

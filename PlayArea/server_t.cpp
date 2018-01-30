@@ -13,49 +13,55 @@ void server_t::update_func()
         map.update();
         map.fill_map_string(map_string);
 
-		// TO DELETE
-		HANDLE output_handle = GetStdHandle(STD_OUTPUT_HANDLE);
-		COORD coord = { 0 };
-		CONSOLE_SCREEN_BUFFER_INFO cBufferInfo;
-		DWORD dwI;
-		DWORD dwSize;
+        for (auto &session : sessions)
+        {
+            session->send_map(map_string, map_string_length);
+        }
 
-		if (output_handle == INVALID_HANDLE_VALUE) return;
-		if (GetConsoleScreenBufferInfo(output_handle, &cBufferInfo))
-		{
-			dwSize = cBufferInfo.dwSize.X * cBufferInfo.dwSize.Y;
-			FillConsoleOutputCharacter(output_handle, TEXT(' '), dwSize, coord, &dwI);
-			SetConsoleCursorPosition(output_handle, coord);
-		}
+#pragma region TO DELETE
+        HANDLE output_handle = GetStdHandle(STD_OUTPUT_HANDLE);
+        COORD coord = { 0 };
+        CONSOLE_SCREEN_BUFFER_INFO cBufferInfo;
+        DWORD dwI;
+        DWORD dwSize;
 
-		time_t t = time(0);
-		tm now;
-		localtime_s(&now, &t);
-		std::cout << now.tm_hour << ":" << now.tm_min << ":" << now.tm_sec << std::endl;
+        if (output_handle == INVALID_HANDLE_VALUE) return;
+        if (GetConsoleScreenBufferInfo(output_handle, &cBufferInfo))
+        {
+            dwSize = cBufferInfo.dwSize.X * cBufferInfo.dwSize.Y;
+            FillConsoleOutputCharacter(output_handle, TEXT(' '), dwSize, coord, &dwI);
+            SetConsoleCursorPosition(output_handle, coord);
+        }
 
-		for (uint32_t i = 2; i < map_string_length; i++)
-		{
-			switch (map_string[i])
-			{
-			case 0:
-				std::cout << ' ';
-				break;
+        time_t t = time(0);
+        tm now;
+        localtime_s(&now, &t);
+        std::cout << now.tm_hour << ":" << now.tm_min << ":" << now.tm_sec << std::endl;
 
-			case 1:
-				std::cout << '*';
-				break;
+        for (uint32_t i = 3; i < map_string_length; i++)
+        {
+            switch (map_string[i])
+            {
+            case 0:
+                std::cout << ' ';
+                break;
 
-			case 2:
-			case 3:
-				std::cout << '#';
-				break;
+            case 1:
+                std::cout << '*';
+                break;
 
-			default:
-				std::cout << (char)map_string[i];
-				break;
-			}
-			if ((i - 1) % map.get_size_x() == 0)std::cout << std::endl;
-		}
+            case 2:
+            case 3:
+                std::cout << '#';
+                break;
+
+            default:
+                std::cout << (char)map_string[i];
+                break;
+            }
+            if ((i - 2) % map.get_size_x() == 0)std::cout << std::endl;
+        }
+#pragma endregion
     }
 }
 
@@ -65,7 +71,9 @@ void server_t::do_accept()
     {
         if (!_ec)
         {
-            std::make_shared<session_t>(std::move(_socket), this)->start();
+            std::shared_ptr<session_t> new_session = std::make_shared<session_t>(std::move(_socket), this);
+            sessions.push_front(new_session);
+            new_session->start();
         }
 
         do_accept();

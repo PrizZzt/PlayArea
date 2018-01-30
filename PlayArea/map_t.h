@@ -3,6 +3,7 @@
 #include <cstdint>
 
 #include "object_s.h"
+#include "server_action_e.h"
 
 class map_t
 {
@@ -41,7 +42,14 @@ public:
 
     uint8_t get_size_x() { return size_x; }
     uint8_t get_size_y() { return size_y; }
-    uint32_t get_map_string_length() { return (size_x * size_y) + sizeof(size_x) + sizeof(size_y); }
+    uint32_t get_map_string_length()
+    {
+        return
+            sizeof(uint8_t)/* Äëÿ server_action_e */ +
+            sizeof(size_x) +
+            sizeof(size_y) +
+            (size_x * size_y);
+    }
 
 	bool has_no_object(uint8_t _x, uint8_t _y)
 	{
@@ -61,10 +69,11 @@ public:
 
     void fill_map_string(uint8_t *_target)
     {
-        _target[0] = size_x;
-        _target[1] = size_y;
+        _target[0] = (uint8_t)server_action_e::MAP;
+        _target[1] = size_x;
+        _target[2] = size_y;
 
-        uint32_t position = 2;
+        uint32_t position = 3;
         for (uint8_t j = 0; j < size_y; j++)
         {
             for (uint8_t i = 0; i < size_x; i++)
@@ -96,7 +105,7 @@ public:
 						case object_type_e::PLAYER:
 							switch (object->next_action)
 							{
-							case action_e::MOVE_UP:
+							case client_action_e::MOVE_UP:
 								if (j > 0 && has_no_object(i, j - 1))
 								{
 									field[j - 1][i] = object;
@@ -104,7 +113,7 @@ public:
 								}
 								break;
 
-							case action_e::MOVE_DOWN:
+							case client_action_e::MOVE_DOWN:
 								if (j < size_y - 1 && has_no_object(i, j + 1))
 								{
 									field[j + 1][i] = object;
@@ -112,7 +121,7 @@ public:
 								}
 								break;
 
-							case action_e::MOVE_RIGHT:
+							case client_action_e::MOVE_RIGHT:
 								if (i < size_x - 1 && has_no_object(i + 1, j))
 								{
 									field[j][i + 1] = object;
@@ -120,7 +129,7 @@ public:
 								}
 								break;
 
-							case action_e::MOVE_LEFT:
+							case client_action_e::MOVE_LEFT:
 								if (i > 0 && has_no_object(i - 1, j))
 								{
 									field[j][i - 1] = object;
@@ -128,12 +137,12 @@ public:
 								}
 								break;
 
-							case action_e::ACT:
+							case client_action_e::ACT:
 								break;
 							}
 							break;
 						}
-						object->next_action = action_e::NONE;
+						object->next_action = client_action_e::NONE;
 					}
 				}
 			}
