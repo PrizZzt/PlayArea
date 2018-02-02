@@ -5,6 +5,7 @@
 #include "session_t.h"
 #include "map_t.h"
 #include "player_t.h"
+#include "game_logic_t.h"
 
 class server_t
 {
@@ -26,7 +27,7 @@ class server_t
     void do_accept();
 
 public:
-    server_t(short _port);
+    server_t(game_logic_t *_game_logic, short _port);
     ~server_t();
 
     uint8_t  *get_map_string() { return map_string; }

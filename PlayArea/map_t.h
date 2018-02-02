@@ -4,14 +4,16 @@
 
 #include "object_s.h"
 #include "server_action_e.h"
+#include "game_logic_t.h"
 
 class map_t
 {
+    game_logic_t *game_logic;
     object_s ***field;
     uint8_t size_x, size_y;
 
 public:
-    map_t(uint8_t _size_x, uint8_t _size_y)
+    map_t(game_logic_t *_game_logic, uint8_t _size_x, uint8_t _size_y)
     {
         size_x = _size_x;
         size_y = _size_y;
@@ -21,13 +23,11 @@ public:
         {
             field[j] = new object_s*[size_x];
             for (uint8_t i = 0; i < size_x; i++)
-            {
-                if (i % 2 == 1 && j % 2 == 1)
-                    field[j][i] = new object_s(object_type_e::UNDESTRUCTIBLE_WALL);
-                else
-                    field[j][i] = nullptr;
-            }
+                field[j][i] = nullptr;
         }
+
+        game_logic = _game_logic;
+        game_logic->init(this);
     }
 
     ~map_t()
@@ -38,6 +38,8 @@ public:
                 delete field[j][i];
             delete[] field[j];
         }
+
+        delete game_logic;
     }
 
     uint8_t get_size_x() { return size_x; }
@@ -50,6 +52,8 @@ public:
             sizeof(size_y) +
             (size_x * size_y);
     }
+    object_s *get_object(uint8_t _x, uint8_t _y) { return field[_y][_x]; }
+    void set_object(object_s *_object, uint8_t _x, uint8_t _y) { field[_y][_x] = _object; }
 
 	bool has_no_object(uint8_t _x, uint8_t _y)
 	{
@@ -84,70 +88,10 @@ public:
         }
     }
 
-	void update()
-	{
-		for (uint8_t j = 0; j < size_y; j++)
-		{
-			for (uint8_t i = 0; i < size_x; i++)
-			{
-				object_s *object = field[j][i];
-				if (object)
-				{
-					if (object->to_delete)
-					{
-						delete object;
-						field[j][i] = nullptr;
-					}
-					else
-					{
-						switch (object->type)
-						{
-						case object_type_e::PLAYER:
-							switch (object->next_action)
-							{
-							case client_action_e::MOVE_UP:
-								if (j > 0 && has_no_object(i, j - 1))
-								{
-									field[j - 1][i] = object;
-									field[j][i] = nullptr;
-								}
-								break;
-
-							case client_action_e::MOVE_DOWN:
-								if (j < size_y - 1 && has_no_object(i, j + 1))
-								{
-									field[j + 1][i] = object;
-									field[j][i] = nullptr;
-								}
-								break;
-
-							case client_action_e::MOVE_RIGHT:
-								if (i < size_x - 1 && has_no_object(i + 1, j))
-								{
-									field[j][i + 1] = object;
-									field[j][i] = nullptr;
-								}
-								break;
-
-							case client_action_e::MOVE_LEFT:
-								if (i > 0 && has_no_object(i - 1, j))
-								{
-									field[j][i - 1] = object;
-									field[j][i] = nullptr;
-								}
-								break;
-
-							case client_action_e::ACT:
-								break;
-							}
-							break;
-						}
-						object->next_action = client_action_e::NONE;
-					}
-				}
-			}
-		}
-	}
+    void update()
+    {
+        game_logic->update(this);
+    }
 
     object_s *add_new_player_object()
     {
