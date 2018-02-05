@@ -34,6 +34,7 @@ public:
     uint32_t  get_map_string_length() { return map_string_length; }
 
     player_t *get_player(char *_login, char *_password);
+    object_s *get_object(player_t *_owner);
 
     void detach_session(std::shared_ptr<session_t> _session)
     {

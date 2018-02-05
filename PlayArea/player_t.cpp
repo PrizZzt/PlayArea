@@ -1,5 +1,6 @@
 #include <string>
 
+#include "map_t.h"
 #include "player_t.h"
 
 player_t::player_t(char *_login, char *_password, object_s *_object)

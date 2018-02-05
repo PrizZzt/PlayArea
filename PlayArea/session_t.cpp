@@ -58,13 +58,14 @@ session_t::session_t(boost::asio::ip::tcp::socket _socket, server_t *_server) :
 
 session_t::~session_t()
 {
-    if (socket.is_open())
-        socket.close();
+	if (socket.is_open())
+		socket.close();
 
-    if (player && player->get_object())
-    {
-        player->get_object()->to_delete = true;
-    }
+	if (player && player->object)
+	{
+		player->object->to_delete = true;
+		player->object = nullptr;
+	}
 }
 
 void session_t::start()

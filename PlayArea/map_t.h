@@ -5,6 +5,7 @@
 #include "object_s.h"
 #include "server_action_e.h"
 #include "game_logic_t.h"
+#include "player_t.h"
 
 class map_t
 {
@@ -90,10 +91,24 @@ public:
 
     void update()
     {
+        for (uint8_t j = 0; j < size_y; j++)
+        {
+            for (uint8_t i = 0; i < size_x; i++)
+            {
+                if (field[j][i] && field[j][i]->to_delete)
+                {
+                    if (field[j][i]->player)
+                        field[j][i]->player->object = nullptr;
+                    delete field[j][i];
+                    field[j][i] = nullptr;
+                }
+            }
+        }
+
         game_logic->update(this);
     }
 
-    object_s *add_new_player_object()
+    object_s *add_new_object(object_type_e _type, player_t *_player = nullptr)
     {
         for (uint8_t j = 0; j < size_y; j++)
         {
@@ -101,7 +116,9 @@ public:
             {
                 if (field[j][i] == nullptr)
                 {
-                    field[j][i] = new object_s(object_type_e::PLAYER);
+                    field[j][i] = new object_s(_type, _player);
+                    if (_player)
+                        _player->object = field[j][i];
                     return field[j][i];
                 }
             }

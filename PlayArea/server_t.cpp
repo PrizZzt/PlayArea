@@ -110,17 +110,20 @@ player_t *server_t::get_player(char *_login, char *_password)
     {
         if (players[i]->check_credentials(_login, _password))
         {
-            return players[i];
+            if (players[i]->object == nullptr || players[i]->object->to_delete == true)
+                players[i]->object = map.add_new_object(object_type_e::PLAYER, players[i]);
+            return players[i]->object ? players[i] : nullptr;
         }
     }
 
-    object_s *new_object = map.add_new_player_object();
+    object_s *new_object = map.add_new_object(object_type_e::PLAYER, nullptr);
     if (new_object)
     {
         players[players_count] = new player_t(_login, _password, new_object);
+        new_object->player = players[players_count];
         players_count++;
 
-		return players[players_count - 1];
+        return new_object->player;
     }
     else
         return nullptr; // Не удалось создать объект на карте - учетку игрока тоже не будем создавать
