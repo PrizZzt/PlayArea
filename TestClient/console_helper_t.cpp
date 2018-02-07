@@ -14,7 +14,7 @@ console_helper_t::console_helper_t()
 	std::cout.setf(std::ios::left);
 	input_handle = GetStdHandle(STD_INPUT_HANDLE);
 	output_handle = GetStdHandle(STD_OUTPUT_HANDLE);
-
+	/*
 	SMALL_RECT sr;
 	sr.Top = 0;
 	sr.Left = 0;
@@ -33,6 +33,7 @@ console_helper_t::console_helper_t()
 	wcscpy_s(cfi.FaceName, L"");
 
 	SetCurrentConsoleFontEx(output_handle, false, &cfi);
+	*/
 }
 
 console_helper_t::~console_helper_t()
@@ -71,18 +72,23 @@ void console_helper_t::show(client_t &_client)
 	{
 		switch (_client.get_map_string()[i])
 		{
-		case 0:
-			std::cout << ' ';
-			break;
-
+		case 0: std::cout << ' '; break;
 		case 1:
-			std::cout << '*';
-			break;
+		case 2: std::cout << '#'; break;
+		case 3: std::cout << '%'; break;
+		case 4: std::cout << '&'; break;
+		case 5: std::cout << '1'; break;
+		case 6: std::cout << '2'; break;
+		case 7: std::cout << '3'; break;
+		case 8: std::cout << '4'; break;
+		case 9: std::cout << '5'; break;
 
-		case 2:
-		case 3:
-			std::cout << '#';
-			break;
+		case 13: std::cout << '*'; break;
+		case 14: std::cout << '1'; break;
+		case 15: std::cout << '2'; break;
+		case 16: std::cout << '3'; break;
+		case 17: std::cout << '4'; break;
+		case 18: std::cout << '5'; break;
 
 		default:
 			std::cout << (char)_client.get_map_string()[i];

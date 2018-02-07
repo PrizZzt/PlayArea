@@ -106,25 +106,32 @@ server_t::~server_t()
 
 player_t *server_t::get_player(char *_login, char *_password)
 {
-    for (uint16_t i = 0; i < players_count; i++)
-    {
-        if (players[i]->check_credentials(_login, _password))
-        {
-            if (players[i]->object == nullptr || players[i]->object->to_delete == true)
-                players[i]->object = map.add_new_object(object_type_e::PLAYER, players[i]);
-            return players[i]->object ? players[i] : nullptr;
-        }
-    }
+	// Ищем среди зарегистрированных
+	for (uint16_t i = 0; i < players_count; i++)
+	{
+		if (players[i]->check_credentials(_login, _password))
+		{
+			// Нашли, проверим, есть ли уже у этого игрока объект на карте (возможно если пришли повторные креды на игрока уже в игре)
+			if (players[i]->object == nullptr)
+				players[i]->object = map.add_new_object(map.get_player_type(), players[i]); // Добавляем объект игроку
+			return players[i]->object ? players[i] : nullptr; // Возвращаем из этого метода игроков только если у них есть объект на карте
+		}
+	}
 
-    object_s *new_object = map.add_new_object(object_type_e::PLAYER, nullptr);
-    if (new_object)
-    {
-        players[players_count] = new player_t(_login, _password, new_object);
-        new_object->player = players[players_count];
-        players_count++;
+	// Максимальное количество игроков
+	if (players_count == UINT8_MAX)return nullptr;
 
-        return new_object->player;
-    }
-    else
-        return nullptr; // Не удалось создать объект на карте - учетку игрока тоже не будем создавать
+	// Пытаемся зарегистрировать игрока если удастся создать его объект
+	object_s *new_object = map.add_new_object(map.get_player_type(), nullptr);
+	if (new_object)
+	{
+		// Удалось - добавляем учетку
+		players[players_count] = new player_t(_login, _password, new_object);
+		new_object->player = players[players_count];
+		players_count++;
+
+		return new_object->player;
+	}
+	else
+		return nullptr; // Не удалось создать объект на карте - учетку игрока тоже не будем создавать
 }

@@ -16,8 +16,8 @@ class server_t
     uint8_t  *map_string;
     uint32_t  map_string_length;
 
-    player_t *players[256];
-    uint16_t  players_count;
+		player_t *players[UINT8_MAX + 1];
+    uint8_t   players_count;
     std::list<std::shared_ptr<session_t>> sessions;
 
     std::thread update_thread;
@@ -34,7 +34,6 @@ public:
     uint32_t  get_map_string_length() { return map_string_length; }
 
     player_t *get_player(char *_login, char *_password);
-    object_s *get_object(player_t *_owner);
 
     void detach_session(std::shared_ptr<session_t> _session)
     {

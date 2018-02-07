@@ -41,9 +41,6 @@
     <ClInclude Include="contstants.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
-    <ClInclude Include="object_type_e.h">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
     <ClInclude Include="object_s.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
