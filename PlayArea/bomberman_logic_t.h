@@ -74,6 +74,54 @@ class bomberman_logic_t : public game_logic_t
 		}
 	}
 
+	// Объект на данной точке карты взрывается
+	bool explode(map_t *_map, uint8_t _x, uint8_t _y)
+	{
+		object_s *object = _map->get_object(_x, _y);
+		if (object)
+		{
+			switch ((objects_e)object->type)
+			{
+			case objects_e::PLAYER:
+			case objects_e::PLAYER_WITH_BOMB_1:
+			case objects_e::PLAYER_WITH_BOMB_2:
+			case objects_e::PLAYER_WITH_BOMB_3:
+			case objects_e::PLAYER_WITH_BOMB_4:
+			case objects_e::PLAYER_WITH_BOMB_5:
+				object->type = (uint8_t)objects_e::DEAD_PLAYER;
+				return true;
+				break;
+
+			case objects_e::MEAT_CHOPPER:
+				object->type = (uint8_t)objects_e::DEAD_MEAT_CHOPPER;
+				return true;
+				break;
+
+			case objects_e::BOMB_1:
+			case objects_e::BOMB_2:
+			case objects_e::BOMB_3:
+			case objects_e::BOMB_4:
+			case objects_e::BOMB_5:
+				object->type = (uint8_t)objects_e::BOOM;
+				object->to_delete = true;
+				return true;
+				break;
+
+			case objects_e::DESTRUCTIBLE_WALL:
+				object->type = (uint8_t)objects_e::DESTROYED_WALL;
+				return true;
+				break;
+
+			case objects_e::UNDESTRUCTIBLE_WALL:
+				return true;
+				break;
+			}
+		}
+		else
+			_map->set_object(new object_s(objects_e::BOOM, true), _x, _y);
+		return false;
+	}
+
 public:
 	void init(map_t *_map)override
 	{
@@ -82,7 +130,25 @@ public:
 			for (uint8_t i = 0; i < _map->get_size_x(); i++)
 			{
 				if (i % 2 == 1 && j % 2 == 1)
-					_map->set_object(new object_s((uint8_t)objects_e::UNDESTRUCTIBLE_WALL, false), i, j);
+					_map->set_object(new object_s(objects_e::UNDESTRUCTIBLE_WALL, false), i, j);
+			}
+		}
+		for (uint8_t i = 0; i < 20; i++)
+		{
+			object_s *wall = new object_s(objects_e::DESTRUCTIBLE_WALL, false);
+			if (_map->place_object_in_random_location(wall) == false)
+			{
+				delete wall;
+				break;
+			}
+		}
+		for (uint8_t i = 0; i < 4; i++)
+		{
+			object_s *meat_chopper = new object_s(objects_e::MEAT_CHOPPER, false);
+			if (_map->place_object_in_random_location(meat_chopper) == false)
+			{
+				delete meat_chopper;
+				break;
 			}
 		}
 	}
@@ -178,13 +244,28 @@ public:
 							}
 							break;
 
-						case objects_e::DEAD_PLAYER://TODO
+						case objects_e::DEAD_PLAYER:
+							object->type = (uint8_t)objects_e::PLAYER;
+
+							if (_map->place_object_in_random_location(object))
+								_map->set_object(nullptr, i, j);
+
 							break;
 
-						case objects_e::DEAD_MEAT_CHOPPER://TODO
+						case objects_e::DEAD_MEAT_CHOPPER:
+							object->type = (uint8_t)objects_e::MEAT_CHOPPER;
+
+							if (_map->place_object_in_random_location(object))
+								_map->set_object(nullptr, i, j);
+
 							break;
 
-						case objects_e::DESTROYED_WALL://TODO
+						case objects_e::DESTROYED_WALL:
+							object->type = (uint8_t)objects_e::DESTRUCTIBLE_WALL;
+
+							if (_map->place_object_in_random_location(object))
+								_map->set_object(nullptr, i, j);
+
 							break;
 						}
 						object->next_action = client_action_e::NONE;
@@ -254,52 +335,5 @@ public:
 	uint8_t get_player_type()override
 	{
 		return (uint8_t)objects_e::PLAYER;
-	}
-
-	bool explode(map_t *_map, uint8_t _x, uint8_t _y)
-	{
-		object_s *object = _map->get_object(_x, _y);
-		if (object)
-		{
-			switch ((objects_e)object->type)
-			{
-			case objects_e::PLAYER:
-			case objects_e::PLAYER_WITH_BOMB_1:
-			case objects_e::PLAYER_WITH_BOMB_2:
-			case objects_e::PLAYER_WITH_BOMB_3:
-			case objects_e::PLAYER_WITH_BOMB_4:
-			case objects_e::PLAYER_WITH_BOMB_5:
-				object->type = (uint8_t)objects_e::DEAD_PLAYER;
-				return true;
-				break;
-
-			case objects_e::MEAT_CHOPPER:
-				object->type = (uint8_t)objects_e::DEAD_MEAT_CHOPPER;
-				return true;
-				break;
-
-			case objects_e::BOMB_1:
-			case objects_e::BOMB_2:
-			case objects_e::BOMB_3:
-			case objects_e::BOMB_4:
-			case objects_e::BOMB_5:
-				object->type = (uint8_t)objects_e::BOOM;
-				object->to_delete = true;
-				return true;
-				break;
-
-			case objects_e::DESTRUCTIBLE_WALL:
-				object->type = (uint8_t)objects_e::DESTROYED_WALL;
-				return true;
-				break;
-
-			case objects_e::UNDESTRUCTIBLE_WALL:
-				return true;
-				break;
-			}
-		}
-		else
-			_map->set_object(new object_s((uint8_t)objects_e::BOOM, true), _x, _y);
-		return false;
 	}
 };

@@ -111,20 +111,39 @@ public:
 
 	object_s *add_new_object(uint8_t _type, player_t *_player = nullptr)
 	{
-		for (uint8_t j = 0; j < size_y; j++)
+		object_s *new_object = new object_s(_type, _player);
+
+		if (place_object_in_random_location(new_object))
 		{
-			for (uint8_t i = 0; i < size_x; i++)
+			if (_player)
+				_player->object = new_object;
+			return new_object;
+		}
+		else
+			delete new_object;
+		return nullptr;
+	}
+
+	bool place_object_in_random_location(object_s *_object)
+	{
+		uint8_t x, y;
+		// TODO «аменить на корректный поиск случайной свободной точки на карте, даже если ее нет)
+		while (true)
+		{
+			x = rand() % size_x;
+			y = rand() % size_y;
+
+			if (field[y][x] && field[y][x]->to_delete)
 			{
-				if (field[j][i] == nullptr)
-				{
-					field[j][i] = new object_s(_type, _player);
-					if (_player)
-						_player->object = field[j][i];
-					return field[j][i];
-				}
+				delete field[y][x];
+				field[y][x] = nullptr;
+			}
+			if (field[y][x] == nullptr)
+			{
+				field[y][x] = _object;
+				return true;
 			}
 		}
-
-		return nullptr;
+		return false;
 	}
 };
