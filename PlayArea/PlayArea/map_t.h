@@ -51,7 +51,7 @@ public:
 			sizeof(uint8_t)/* Для server_action_e */ +
 			sizeof(size_x) +
 			sizeof(size_y) +
-			(size_x * size_y);
+			(size_x * size_y * 2);
 	}
 	object_s *get_object(uint8_t _x, uint8_t _y) { return field[_y][_x]; }
 	uint8_t get_player_type() { return game_logic->get_player_type(); }
@@ -85,7 +85,8 @@ public:
 			for (uint8_t i = 0; i < size_x; i++)
 			{
 				_target[position] = field[j][i] ? (uint8_t)field[j][i]->type : 0;
-				position++;
+				_target[position + 1] = field[j][i] ? (uint8_t)field[j][i]->id : 0;
+				position += 2;
 			}
 		}
 	}
@@ -109,9 +110,9 @@ public:
 		game_logic->update(this);
 	}
 
-	object_s *add_new_object(uint8_t _type, player_t *_player = nullptr)
+	object_s *add_new_object(uint8_t _id, uint8_t _type, player_t *_player = nullptr)
 	{
-		object_s *new_object = new object_s(_type, _player);
+		object_s *new_object = new object_s(_id, _type, _player);
 
 		if (place_object_in_random_location(new_object))
 		{
@@ -127,7 +128,7 @@ public:
 	bool place_object_in_random_location(object_s *_object)
 	{
 		uint8_t x, y;
-		// TODO Заменить на корректный поиск случайной свободной точки на карте, даже если ее нет)
+		// TODO Заменить на корректный поиск случайной свободной точки на карте (даже если ее нет)
 		while (true)
 		{
 			x = rand() % size_x;

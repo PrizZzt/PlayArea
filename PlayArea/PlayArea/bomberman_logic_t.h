@@ -118,7 +118,7 @@ class bomberman_logic_t : public game_logic_t
 			}
 		}
 		else
-			_map->set_object(new object_s(objects_e::BOOM, true), _x, _y);
+			_map->set_object(new object_s(0, objects_e::BOOM, true), _x, _y);
 		return false;
 	}
 
@@ -130,12 +130,12 @@ public:
 			for (uint8_t i = 0; i < _map->get_size_x(); i++)
 			{
 				if (i % 2 == 1 && j % 2 == 1)
-					_map->set_object(new object_s(objects_e::UNDESTRUCTIBLE_WALL, false), i, j);
+					_map->set_object(new object_s(0, objects_e::UNDESTRUCTIBLE_WALL, false), i, j);
 			}
 		}
 		for (uint8_t i = 0; i < 20; i++)
 		{
-			object_s *wall = new object_s(objects_e::DESTRUCTIBLE_WALL, false);
+			object_s *wall = new object_s(i, objects_e::DESTRUCTIBLE_WALL, false);
 			if (_map->place_object_in_random_location(wall) == false)
 			{
 				delete wall;
@@ -144,7 +144,7 @@ public:
 		}
 		for (uint8_t i = 0; i < 4; i++)
 		{
-			object_s *meat_chopper = new object_s(objects_e::MEAT_CHOPPER, false);
+			object_s *meat_chopper = new object_s(i, objects_e::MEAT_CHOPPER, false);
 			if (_map->place_object_in_random_location(meat_chopper) == false)
 			{
 				delete meat_chopper;
@@ -189,7 +189,7 @@ public:
 										_map->set_object(nullptr, i, j);
 									else
 									{
-										_map->set_object(new object_s(get_bomb_state(object->type), object->player), i, j);
+										_map->set_object(new object_s(0, get_bomb_state(object->type), object->player), i, j);
 										object->type = (uint8_t)objects_e::PLAYER;
 									}
 								}
@@ -203,7 +203,7 @@ public:
 										_map->set_object(nullptr, i, j);
 									else
 									{
-										_map->set_object(new object_s(get_bomb_state(object->type), object->player), i, j);
+										_map->set_object(new object_s(0, get_bomb_state(object->type), object->player), i, j);
 										object->type = (uint8_t)objects_e::PLAYER;
 									}
 								}
@@ -217,7 +217,7 @@ public:
 										_map->set_object(nullptr, i, j);
 									else
 									{
-										_map->set_object(new object_s(get_bomb_state(object->type), object->player), i, j);
+										_map->set_object(new object_s(0, get_bomb_state(object->type), object->player), i, j);
 										object->type = (uint8_t)objects_e::PLAYER;
 									}
 								}
@@ -231,7 +231,7 @@ public:
 										_map->set_object(nullptr, i, j);
 									else
 									{
-										_map->set_object(new object_s(get_bomb_state(object->type), object->player), i, j);
+										_map->set_object(new object_s(0, get_bomb_state(object->type), object->player), i, j);
 										object->type = (uint8_t)objects_e::PLAYER;
 									}
 								}

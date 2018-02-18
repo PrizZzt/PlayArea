@@ -7,6 +7,7 @@ class player_t;
 // Представление любого объекта на карте
 struct object_s
 {
+	uint8_t         id;
 	uint8_t         type;
 	client_action_e next_action;
 	bool            to_delete;
@@ -14,7 +15,7 @@ struct object_s
 	player_t *player;
 
 	template<typename T>
-	object_s(T _type, player_t *_player = nullptr)
+	object_s(uint8_t _id, T _type, player_t *_player = nullptr)
 	{
 		type = (uint8_t)_type;
 		next_action = client_action_e::NONE;
@@ -24,7 +25,7 @@ struct object_s
 	}
 
 	template<typename T>
-	object_s(T _type, bool _to_delete = false)
+	object_s(uint8_t _id, T _type, bool _to_delete = false)
 	{
 		type = (uint8_t)_type;
 		next_action = client_action_e::NONE;
