@@ -113,7 +113,7 @@ player_t *server_t::get_player(char *_login, char *_password)
 		{
 			// Нашли, проверим, есть ли уже у этого игрока объект на карте (возможно если пришли повторные креды на игрока уже в игре)
 			if (players[i]->object == nullptr)
-				players[i]->object = map.add_new_object(i, map.get_player_type(), players[i]); // Добавляем объект игроку
+				players[i]->object = map.add_player_object(i, players[i]); // Добавляем объект игроку
 			return players[i]->object ? players[i] : nullptr; // Возвращаем из этого метода игроков только если у них есть объект на карте
 		}
 	}
@@ -122,7 +122,7 @@ player_t *server_t::get_player(char *_login, char *_password)
 	if (players_count == UINT8_MAX)return nullptr;
 
 	// Пытаемся зарегистрировать игрока если удастся создать его объект
-	object_s *new_object = map.add_new_object(players_count, map.get_player_type(), nullptr);
+	object_s *new_object = map.add_player_object(players_count, nullptr);
 	if (new_object)
 	{
 		// Удалось - добавляем учетку

@@ -54,7 +54,6 @@ public:
 			(size_x * size_y * 2);
 	}
 	object_s *get_object(uint8_t _x, uint8_t _y) { return field[_y][_x]; }
-	uint8_t get_player_type() { return game_logic->get_player_type(); }
 	void set_object(object_s *_object, uint8_t _x, uint8_t _y) { field[_y][_x] = _object; }
 
 	bool has_no_object(uint8_t _x, uint8_t _y)
@@ -110,9 +109,9 @@ public:
 		game_logic->update(this);
 	}
 
-	object_s *add_new_object(uint8_t _id, uint8_t _type, player_t *_player = nullptr)
+	object_s *add_player_object(uint8_t _id, player_t *_player)
 	{
-		object_s *new_object = new object_s(_id, _type, _player);
+		object_s *new_object = game_logic->create_player_object(_id, _player);
 
 		if (place_object_in_random_location(new_object))
 		{

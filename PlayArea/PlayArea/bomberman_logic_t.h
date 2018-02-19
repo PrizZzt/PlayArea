@@ -332,8 +332,8 @@ public:
 		}
 	}
 
-	uint8_t get_player_type()override
+	object_s *create_player_object(uint8_t _id, player_t *_player)override
 	{
-		return (uint8_t)objects_e::PLAYER;
+		return new object_s(_id, objects_e::PLAYER, _player);
 	}
 };
