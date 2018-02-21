@@ -156,6 +156,7 @@
     <ClCompile Include="PlayAreaClientCpp.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="bomberman_objects_e.h" />
     <ClInclude Include="client_t.h" />
     <ClInclude Include="console_helper_t.h" />
   </ItemGroup>

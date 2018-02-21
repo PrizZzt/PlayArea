@@ -1,0 +1,30 @@
+#pragma once
+
+#include <cstdint>
+
+enum class bomberman_objects_e : uint8_t
+{
+	NONE,
+
+	UNDESTRUCTIBLE_WALL,
+	DESTRUCTIBLE_WALL,
+	DESTROYED_WALL,
+
+	PLAYER,
+	PLAYER_WITH_BOMB_1,
+	PLAYER_WITH_BOMB_2,
+	PLAYER_WITH_BOMB_3,
+	PLAYER_WITH_BOMB_4,
+	PLAYER_WITH_BOMB_5,
+	DEAD_PLAYER,
+
+	MEAT_CHOPPER,
+	DEAD_MEAT_CHOPPER,
+
+	BOOM,
+	BOMB_1,
+	BOMB_2,
+	BOMB_3,
+	BOMB_4,
+	BOMB_5
+};

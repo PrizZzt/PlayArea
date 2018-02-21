@@ -38,7 +38,7 @@ void server_t::update_func()
 		localtime_s(&now, &t);
 		std::cout << now.tm_hour << ":" << now.tm_min << ":" << now.tm_sec << std::endl;
 
-		for (uint32_t i = 3; i < map_string_length; i += 2)
+		for (uint32_t i = 3; i < map.get_map_string_length(); i += 2)
 		{
 			switch (map_string[i])
 			{
@@ -59,7 +59,7 @@ void server_t::update_func()
 				std::cout << (char)map_string[i];
 				break;
 			}
-			if (((i - 2) / 2) % map.get_size_x() == 0)std::cout << std::endl;
+			if (((i - 3) / 2 + 1) % map.get_size_x() == 0)std::cout << std::endl;
 		}
 #pragma endregion
 	}

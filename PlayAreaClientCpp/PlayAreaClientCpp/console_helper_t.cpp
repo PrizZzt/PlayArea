@@ -7,6 +7,7 @@
 
 #include "console_helper_t.h"
 #include "client_t.h"
+#include "bomberman_objects_e.h"
 
 console_helper_t::console_helper_t()
 {
@@ -68,37 +69,37 @@ void console_helper_t::show(client_t &_client)
 
 	std::unique_lock<std::mutex> lock(_client.get_map_string_mutex());
 
-	for (uint32_t i = 0; i < _client.get_map_string_length(); i += 2)
+	for (uint32_t i = 3; i < _client.get_map_string_length(); i += 2)
 	{
-		switch (_client.get_map_string()[i])
+		switch ((bomberman_objects_e)_client.get_map_string()[i])
 		{
-		case 0: std::cout << ' '; break;
-		case 1:
-		case 2: std::cout << '#'; break;
-		case 3: std::cout << '%'; break;
-		case 4: std::cout << 'P'; break;
-		case 5: std::cout << '1'; break;
-		case 6: std::cout << '2'; break;
-		case 7: std::cout << '3'; break;
-		case 8: std::cout << '4'; break;
-		case 9: std::cout << '5'; break;
-		case 10: std::cout << 'X'; break;
+		case bomberman_objects_e::NONE: std::cout << ' '; break;
+		case bomberman_objects_e::UNDESTRUCTIBLE_WALL:
+		case bomberman_objects_e::DESTRUCTIBLE_WALL: std::cout << '#'; break;
+		case bomberman_objects_e::DESTROYED_WALL: std::cout << '%'; break;
+		case bomberman_objects_e::PLAYER: std::cout << 'P'; break;
+		case bomberman_objects_e::PLAYER_WITH_BOMB_1: std::cout << '1'; break;
+		case bomberman_objects_e::PLAYER_WITH_BOMB_2: std::cout << '2'; break;
+		case bomberman_objects_e::PLAYER_WITH_BOMB_3: std::cout << '3'; break;
+		case bomberman_objects_e::PLAYER_WITH_BOMB_4: std::cout << '4'; break;
+		case bomberman_objects_e::PLAYER_WITH_BOMB_5: std::cout << '5'; break;
+		case bomberman_objects_e::DEAD_PLAYER: std::cout << 'X'; break;
 
-		case 11: std::cout << 'M'; break;
-		case 12: std::cout << 'W'; break;
+		case bomberman_objects_e::MEAT_CHOPPER: std::cout << 'M'; break;
+		case bomberman_objects_e::DEAD_MEAT_CHOPPER: std::cout << 'W'; break;
 
-		case 13: std::cout << '*'; break;
-		case 14: std::cout << '1'; break;
-		case 15: std::cout << '2'; break;
-		case 16: std::cout << '3'; break;
-		case 17: std::cout << '4'; break;
-		case 18: std::cout << '5'; break;
+		case bomberman_objects_e::BOOM: std::cout << '*'; break;
+		case bomberman_objects_e::BOMB_1: std::cout << '1'; break;
+		case bomberman_objects_e::BOMB_2: std::cout << '2'; break;
+		case bomberman_objects_e::BOMB_3: std::cout << '3'; break;
+		case bomberman_objects_e::BOMB_4: std::cout << '4'; break;
+		case bomberman_objects_e::BOMB_5: std::cout << '5'; break;
 
 		default:
 			std::cout << (char)_client.get_map_string()[i];
 			break;
 		}
-		if (((i + 1) / 2) % _client.get_size_x() == 0)std::cout << std::endl;
+		if (((i - 3) / 2 + 1) % _client.get_size_x() == 0)std::cout << std::endl;
 	}
 	std::cout << std::endl;
 }
