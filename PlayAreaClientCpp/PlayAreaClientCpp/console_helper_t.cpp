@@ -69,7 +69,7 @@ void console_helper_t::show(client_t &_client)
 
 	std::unique_lock<std::mutex> lock(_client.get_map_string_mutex());
 
-	for (uint32_t i = 3; i < _client.get_map_string_length(); i += 2)
+	for (uint32_t i = 0; i < _client.get_map_string_length(); i += 2)
 	{
 		switch ((bomberman_objects_e)_client.get_map_string()[i])
 		{
@@ -99,7 +99,7 @@ void console_helper_t::show(client_t &_client)
 			std::cout << (char)_client.get_map_string()[i];
 			break;
 		}
-		if (((i - 3) / 2 + 1) % _client.get_size_x() == 0)std::cout << std::endl;
+		if ((i / 2 + 1) % _client.get_size_x() == 0)std::cout << std::endl;
 	}
 	std::cout << std::endl;
 }
