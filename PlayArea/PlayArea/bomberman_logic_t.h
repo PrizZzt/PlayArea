@@ -273,6 +273,28 @@ public:
 				}
 			}
 		}
+		// Ход ботов
+		for (uint8_t j = 0; j < _map->get_size_y(); j++)
+		{
+			for (uint8_t i = 0; i < _map->get_size_x(); i++)
+			{
+				if ((object = _map->get_object(i, j)) && object->type == (uint8_t)objects_e::MEAT_CHOPPER)
+				{
+					for (uint8_t k = 1; k <= i; k++)
+					{
+					}
+					for (uint8_t k = 1; k <= j; k++)
+					{
+					}
+					for (uint8_t k = 1; k < _map->get_size_x() - i; k++)
+					{
+					}
+					for (uint8_t k = 1; k < _map->get_size_y() - j; k++)
+					{
+					}
+				}
+			}
+		}
 		// Обработка всех бомб
 		for (uint8_t j = 0; j < _map->get_size_y(); j++)
 		{
