@@ -149,10 +149,10 @@ public:
 		return false;
 	}
 
-	bool try_move_meatchopper(map_t *_map, uint8_t _x, uint8_t _y, int8_t _shift_x, int8_t _shift_y)
+	void try_move_meatchopper(map_t *_map, uint8_t _x, uint8_t _y, int8_t _shift_x, int8_t _shift_y)
 	{
 		if (_x < -_shift_x || _y < -_shift_y || _x + _shift_x >= _map->get_size_x() || _y + _shift_y >= _map->get_size_y())
-			return false;
+			return;
 
 		object_s *object = _map->get_object(_x, _y);
 
@@ -177,7 +177,7 @@ public:
 					)
 				{
 					target->type = (uint8_t)objects_e::DEAD_PLAYER;
-					return true;
+					return;
 				}
 			}
 		}
@@ -186,16 +186,14 @@ public:
 		{
 			_map->set_object(nullptr, _x, _y);
 			_map->set_object(object, _x + _shift_x, _y + _shift_y);
-			return true;
+			return;
 		}
-
-		return false;
 	}
 
-	bool try_move_player(map_t *_map, uint8_t _x, uint8_t _y, int8_t _shift_x, int8_t _shift_y)
+	void try_move_player(map_t *_map, uint8_t _x, uint8_t _y, int8_t _shift_x, int8_t _shift_y)
 	{
 		if (_x < -_shift_x || _y < -_shift_y || _x + _shift_x >= _map->get_size_x() || _y + _shift_y >= _map->get_size_y())
-			return false;
+			return;
 
 		object_s *object = _map->get_object(_x, _y);
 
@@ -218,10 +216,8 @@ public:
 				_map->set_object(new object_s(0, get_bomb_state(object->type), object->player), _x, _y);
 				object->type = (uint8_t)objects_e::PLAYER;
 			}
-			return true;
+			return;
 		}
-
-		return false;
 	}
 
 public:
@@ -337,85 +333,84 @@ public:
 		}
 		// Ход ботов
 		object_s *target;
-		int8_t value;
 		for (uint8_t j = 0; j < _map->get_size_y(); j++)
 		{
 			for (uint8_t i = 0; i < _map->get_size_x(); i++)
 			{
 				if ((object = _map->get_object(i, j)) && object->type == (uint8_t)objects_e::MEATCHOPPER && object->next_action == client_action_e::NONE)
 				{
+					// Определяем максимальную дальность, на которую надо делать проверку
 					uint8_t range = i;
 					if (j > range)range = j;
 					if (_map->get_size_x() - i > range)range = _map->get_size_x() - i;
 					if (_map->get_size_y() - j > range)range = _map->get_size_y() - j;
 
+					int8_t values[4] = { 0,0,0,0 }; // Цены ячеек в конце поля зрения по всем сторонам
+					uint8_t ranges[4] = { 0,0,0,0 }; // Дальность зрения во все стороны
+					bool continue_check = true; // Флаг продолжения проверки
 					for (uint8_t k = 1; k <= range; k++)
 					{
-						if (i >= k && (value = get_meatchopper_value(target = _map->get_object(i - k, j))) != 0)
-						{
-							if (value > 0)
-								try_move_meatchopper(_map, i, j, -1, 0);
-							else
-							{
-								if (try_move_meatchopper(_map, i, j, 1, 0) || try_move_meatchopper(_map, i, j, 0, 1) || try_move_meatchopper(_map, i, j, 0, -1))
-								{
-								}
-							}
-							object->next_action = client_action_e::ACT;
+						// Прекращаем смотреть, если со всех сторон уперлись в препятствия, иначе проверяем снова
+						if (continue_check)
+							continue_check = false;
+						else
 							break;
+
+						if (values[0] == 0 && i >= k) // Объект слева не найден и края поля не достигли
+						{
+							// Продолжаем смотреть влево
+							continue_check = true;
+							values[0] = get_meatchopper_value(target = _map->get_object(i - k, j));
+							ranges[0] = k;
 						}
-						if (j >= k && (value = get_meatchopper_value(target = _map->get_object(i, j - k))) != 0)
+						if (values[1] == 0 && j >= k) // Объект сверху не найден и края поля не достигли
 						{
-							if (value > 0)
-							{
-								if (value > 1)
-									try_move_meatchopper(_map, i, j, 0, -1);
-							}
-							else
-							{
-								if (try_move_meatchopper(_map, i, j, 1, 0) || try_move_meatchopper(_map, i, j, 0, 1) || try_move_meatchopper(_map, i, j, -1, 0))
-								{
-								}
-							}
-							object->next_action = client_action_e::ACT;
-							break;
+							// Продолжаем смотреть вверх
+							continue_check = true;
+							values[1] = get_meatchopper_value(target = _map->get_object(i, j - k));
+							ranges[1] = k;
 						}
-						if (i + k < _map->get_size_x() && (value = get_meatchopper_value(target = _map->get_object(i + k, j))) != 0)
+						if (values[2] == 0 && i + k < _map->get_size_x()) // Объект справа не найден и края поля не достигли
 						{
-							if (value > 0)
-							{
-								if (value > 1)
-									try_move_meatchopper(_map, i, j, 1, 0);
-							}
-							else
-							{
-								if (try_move_meatchopper(_map, i, j, -1, 0) || try_move_meatchopper(_map, i, j, 0, 1) || try_move_meatchopper(_map, i, j, 0, -1))
-								{
-								}
-							}
-							object->next_action = client_action_e::ACT;
-							break;
+							// Продолжаем смотреть вправо
+							continue_check = true;
+							values[2] = get_meatchopper_value(target = _map->get_object(i + k, j));
+							ranges[2] = k;
 						}
-						if (j + k < _map->get_size_y() && (value = get_meatchopper_value(target = _map->get_object(i, j + k))) != 0)
+						if (values[3] == 0 && j + k < _map->get_size_y()) // Объект снизу не найден и края поля не достигли
 						{
-							if (value > 0)
-							{
-								if (value > 1)
-									try_move_meatchopper(_map, i, j, 0, 1);
-							}
-							else
-							{
-								if (try_move_meatchopper(_map, i, j, 1, 0) || try_move_meatchopper(_map, i, j, 0, -1) || try_move_meatchopper(_map, i, j, -1, 0))
-								{
-								}
-							}
-							object->next_action = client_action_e::ACT;
-							break;
+							// Продолжаем смотреть вниз
+							continue_check = true;
+							values[3] = get_meatchopper_value(target = _map->get_object(i, j + k));
+							ranges[3] = k;
 						}
 					}
-					if (try_move_meatchopper(_map, i, j, 1, 0) || try_move_meatchopper(_map, i, j, 0, -1) || try_move_meatchopper(_map, i, j, -1, 0) || try_move_meatchopper(_map, i, j, 0, 1))
+					// Находим максимальное значение среди всех видимых объектов
+					uint8_t max_k = 0; // Номер направления с максимальной ценой и минимальной дальностью (первоначально = 0)
+					int8_t max_value = values[max_k]; // Цена выбранного направления
+					uint8_t min_range = ranges[max_k]; // Дальность выбранного направления
+					for (uint8_t k = 1; k < 4; k++)
 					{
+						if (values[k] > max_value || (values[k] == max_value && ranges[k] < min_range))
+						{
+							max_k = k;
+							max_value = values[k];
+							min_range = ranges[k];
+						}
 					}
+
+					// Пытаемся отработать движение относительно всех видимых объектов, начиная с самого значимого
+					for (uint8_t k = 0; k < 4; k++)
+					{
+						switch ((max_k + k) % 4)
+						{
+						case 0: if (values[0] >= 0)try_move_meatchopper(_map, i, j, -1, 0); else try_move_meatchopper(_map, i, j, 1, 0); break;
+						case 1: if (values[1] >= 0)try_move_meatchopper(_map, i, j, 0, -1); else try_move_meatchopper(_map, i, j, 0, 1); break;
+						case 2: if (values[2] >= 0)try_move_meatchopper(_map, i, j, 1, 0); else try_move_meatchopper(_map, i, j, -1, 0); break;
+						case 3: if (values[3] >= 0)try_move_meatchopper(_map, i, j, 0, 1); else try_move_meatchopper(_map, i, j, 0, -1); break;
+						}
+					}
+					object->next_action = client_action_e::ACT;
 				}
 			}
 		}

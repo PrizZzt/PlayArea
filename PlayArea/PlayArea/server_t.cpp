@@ -117,7 +117,7 @@ server_t::~server_t()
 player_t *server_t::get_player(char *_login, char *_password)
 {
 	// Ищем среди зарегистрированных
-	for (uint16_t i = 0; i < players_count; i++)
+	for (uint8_t i = 0; i < players_count; i++)
 	{
 		if (players[i]->check_credentials(_login, _password))
 		{
@@ -129,7 +129,7 @@ player_t *server_t::get_player(char *_login, char *_password)
 	}
 
 	// Максимальное количество игроков
-	if (players_count == UINT8_MAX)return nullptr;
+	if (players_count == MAX_PLAYERS_COUNT)return nullptr;
 
 	// Пытаемся зарегистрировать игрока если удастся создать его объект
 	object_s *new_object = map.add_player_object(players_count, nullptr);

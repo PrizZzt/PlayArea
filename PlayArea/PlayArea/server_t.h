@@ -16,8 +16,8 @@ class server_t
     uint8_t  *map_string;
     uint32_t  map_string_length;
 
-		player_t *players[UINT8_MAX + 1];
-    uint8_t   players_count;
+		player_t *players[MAX_PLAYERS_COUNT];
+    uint16_t  players_count;
     std::list<std::shared_ptr<session_t>> sessions;
 
     std::thread update_thread;

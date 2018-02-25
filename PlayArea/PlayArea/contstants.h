@@ -1,6 +1,7 @@
 #pragma once
 
-#define MAX_LENGTH 41
+#define MAX_LENGTH        41  // ћаксимальна€ длина сообщени€ от клиента
+#define MAX_PLAYERS_COUNT 256 // ћаксимальное количество игроков
 
 /*
 
