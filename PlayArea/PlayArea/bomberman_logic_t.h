@@ -75,7 +75,7 @@ public:
 		}
 	}
 
-	uint8_t get_meatchopper_value(object_s *_object)
+	int8_t get_meatchopper_value(object_s *_object)
 	{
 		if (_object == nullptr)
 			return 0;
@@ -337,7 +337,7 @@ public:
 		}
 		// Ход ботов
 		object_s *target;
-		uint8_t value;
+		int8_t value;
 		for (uint8_t j = 0; j < _map->get_size_y(); j++)
 		{
 			for (uint8_t i = 0; i < _map->get_size_x(); i++)
