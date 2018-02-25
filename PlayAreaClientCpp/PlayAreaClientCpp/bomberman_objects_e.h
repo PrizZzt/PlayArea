@@ -18,8 +18,8 @@ enum class bomberman_objects_e : uint8_t
 	PLAYER_WITH_BOMB_5,
 	DEAD_PLAYER,
 
-	MEAT_CHOPPER,
-	DEAD_MEAT_CHOPPER,
+	MEATCHOPPER,
+	DEAD_MEATCHOPPER,
 
 	BOOM,
 	BOMB_1,

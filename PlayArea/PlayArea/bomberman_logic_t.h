@@ -4,6 +4,7 @@
 
 class bomberman_logic_t : public game_logic_t
 {
+public:
 	enum class objects_e : uint8_t
 	{
 		NONE,
@@ -20,8 +21,8 @@ class bomberman_logic_t : public game_logic_t
 		PLAYER_WITH_BOMB_5,
 		DEAD_PLAYER,
 
-		MEAT_CHOPPER,
-		DEAD_MEAT_CHOPPER,
+		MEATCHOPPER,
+		DEAD_MEATCHOPPER,
 
 		BOOM,
 		BOMB_1,
@@ -74,6 +75,32 @@ class bomberman_logic_t : public game_logic_t
 		}
 	}
 
+	uint8_t get_meatchopper_value(object_s *_object)
+	{
+		if (_object == nullptr)
+			return 0;
+
+		switch ((objects_e)_object->type)
+		{
+		case objects_e::BOMB_1:              return -10;
+		case objects_e::BOMB_2:              return -8;
+		case objects_e::BOMB_3:              return -6;
+		case objects_e::BOMB_4:              return -4;
+		case objects_e::BOMB_5:              return -2;
+		case objects_e::PLAYER_WITH_BOMB_1:  return 1;
+		case objects_e::PLAYER_WITH_BOMB_2:  return 2;
+		case objects_e::PLAYER_WITH_BOMB_3:  return 4;
+		case objects_e::PLAYER_WITH_BOMB_4:  return 6;
+		case objects_e::PLAYER_WITH_BOMB_5:  return 8;
+		case objects_e::PLAYER:              return 10;
+
+		case objects_e::DESTRUCTIBLE_WALL:
+		case objects_e::UNDESTRUCTIBLE_WALL: return -1;
+
+		default:                             return 0;
+		}
+	}
+
 	// Объект на данной точке карты взрывается
 	bool explode(map_t *_map, uint8_t _x, uint8_t _y)
 	{
@@ -92,8 +119,8 @@ class bomberman_logic_t : public game_logic_t
 				return true;
 				break;
 
-			case objects_e::MEAT_CHOPPER:
-				object->type = (uint8_t)objects_e::DEAD_MEAT_CHOPPER;
+			case objects_e::MEATCHOPPER:
+				object->type = (uint8_t)objects_e::DEAD_MEATCHOPPER;
 				return true;
 				break;
 
@@ -122,6 +149,81 @@ class bomberman_logic_t : public game_logic_t
 		return false;
 	}
 
+	bool try_move_meatchopper(map_t *_map, uint8_t _x, uint8_t _y, int8_t _shift_x, int8_t _shift_y)
+	{
+		if (_x < -_shift_x || _y < -_shift_y || _x + _shift_x >= _map->get_size_x() || _y + _shift_y >= _map->get_size_y())
+			return false;
+
+		object_s *object = _map->get_object(_x, _y);
+
+		object_s *target = _map->get_object(_x + _shift_x, _y + _shift_y);
+		if (target)
+		{
+			if (target->to_delete)
+			{
+				delete target;
+				target = nullptr;
+				_map->set_object(nullptr, _x + _shift_x, _y + _shift_y);
+			}
+			else
+			{
+				if (
+					target->type == (uint8_t)objects_e::PLAYER ||
+					target->type == (uint8_t)objects_e::PLAYER_WITH_BOMB_1 ||
+					target->type == (uint8_t)objects_e::PLAYER_WITH_BOMB_2 ||
+					target->type == (uint8_t)objects_e::PLAYER_WITH_BOMB_3 ||
+					target->type == (uint8_t)objects_e::PLAYER_WITH_BOMB_4 ||
+					target->type == (uint8_t)objects_e::PLAYER_WITH_BOMB_5
+					)
+				{
+					target->type = (uint8_t)objects_e::DEAD_PLAYER;
+					return true;
+				}
+			}
+		}
+
+		if (object && target == nullptr)
+		{
+			_map->set_object(nullptr, _x, _y);
+			_map->set_object(object, _x + _shift_x, _y + _shift_y);
+			return true;
+		}
+
+		return false;
+	}
+
+	bool try_move_player(map_t *_map, uint8_t _x, uint8_t _y, int8_t _shift_x, int8_t _shift_y)
+	{
+		if (_x < -_shift_x || _y < -_shift_y || _x + _shift_x >= _map->get_size_x() || _y + _shift_y >= _map->get_size_y())
+			return false;
+
+		object_s *object = _map->get_object(_x, _y);
+
+		object_s *target = _map->get_object(_x + _shift_x, _y + _shift_y);
+		if (target && target->to_delete)
+		{
+			delete target;
+			target = nullptr;
+			_map->set_object(nullptr, _x + _shift_x, _y + _shift_y);
+		}
+
+		if (object && target == nullptr)
+		{
+			_map->set_object(object, _x + _shift_x, _y + _shift_y);
+
+			if (object->type == (uint8_t)objects_e::PLAYER)
+				_map->set_object(nullptr, _x, _y);
+			else
+			{
+				_map->set_object(new object_s(0, get_bomb_state(object->type), object->player), _x, _y);
+				object->type = (uint8_t)objects_e::PLAYER;
+			}
+			return true;
+		}
+
+		return false;
+	}
+
 public:
 	void init(map_t *_map)override
 	{
@@ -144,10 +246,10 @@ public:
 		}
 		for (uint8_t i = 0; i < 4; i++)
 		{
-			object_s *meat_chopper = new object_s(i, objects_e::MEAT_CHOPPER, false);
-			if (_map->place_object_in_random_location(meat_chopper) == false)
+			object_s *meatchopper = new object_s(i, objects_e::MEATCHOPPER, false);
+			if (_map->place_object_in_random_location(meatchopper) == false)
 			{
-				delete meat_chopper;
+				delete meatchopper;
 				break;
 			}
 		}
@@ -182,59 +284,19 @@ public:
 							switch (object->next_action)
 							{
 							case client_action_e::MOVE_UP:
-								if (j > 0 && _map->has_no_object(i, j - 1))
-								{
-									_map->set_object(object, i, j - 1);
-									if (object->type == (uint8_t)objects_e::PLAYER)
-										_map->set_object(nullptr, i, j);
-									else
-									{
-										_map->set_object(new object_s(0, get_bomb_state(object->type), object->player), i, j);
-										object->type = (uint8_t)objects_e::PLAYER;
-									}
-								}
+								try_move_player(_map, i, j, 0, -1);
 								break;
 
 							case client_action_e::MOVE_DOWN:
-								if (j < _map->get_size_y() - 1 && _map->has_no_object(i, j + 1))
-								{
-									_map->set_object(object, i, j + 1);
-									if (object->type == (uint8_t)objects_e::PLAYER)
-										_map->set_object(nullptr, i, j);
-									else
-									{
-										_map->set_object(new object_s(0, get_bomb_state(object->type), object->player), i, j);
-										object->type = (uint8_t)objects_e::PLAYER;
-									}
-								}
+								try_move_player(_map, i, j, 0, 1);
 								break;
 
 							case client_action_e::MOVE_RIGHT:
-								if (i < _map->get_size_x() - 1 && _map->has_no_object(i + 1, j))
-								{
-									_map->set_object(object, i + 1, j);
-									if (object->type == (uint8_t)objects_e::PLAYER)
-										_map->set_object(nullptr, i, j);
-									else
-									{
-										_map->set_object(new object_s(0, get_bomb_state(object->type), object->player), i, j);
-										object->type = (uint8_t)objects_e::PLAYER;
-									}
-								}
+								try_move_player(_map, i, j, 1, 0);
 								break;
 
 							case client_action_e::MOVE_LEFT:
-								if (i > 0 && _map->has_no_object(i - 1, j))
-								{
-									_map->set_object(object, i - 1, j);
-									if (object->type == (uint8_t)objects_e::PLAYER)
-										_map->set_object(nullptr, i, j);
-									else
-									{
-										_map->set_object(new object_s(0, get_bomb_state(object->type), object->player), i, j);
-										object->type = (uint8_t)objects_e::PLAYER;
-									}
-								}
+								try_move_player(_map, i, j, -1, 0);
 								break;
 
 							case client_action_e::ACT:
@@ -252,8 +314,8 @@ public:
 
 							break;
 
-						case objects_e::DEAD_MEAT_CHOPPER:
-							object->type = (uint8_t)objects_e::MEAT_CHOPPER;
+						case objects_e::DEAD_MEATCHOPPER:
+							object->type = (uint8_t)objects_e::MEATCHOPPER;
 
 							if (_map->place_object_in_random_location(object))
 								_map->set_object(nullptr, i, j);
@@ -274,22 +336,84 @@ public:
 			}
 		}
 		// Ход ботов
+		object_s *target;
+		uint8_t value;
 		for (uint8_t j = 0; j < _map->get_size_y(); j++)
 		{
 			for (uint8_t i = 0; i < _map->get_size_x(); i++)
 			{
-				if ((object = _map->get_object(i, j)) && object->type == (uint8_t)objects_e::MEAT_CHOPPER)
+				if ((object = _map->get_object(i, j)) && object->type == (uint8_t)objects_e::MEATCHOPPER && object->next_action == client_action_e::NONE)
 				{
-					for (uint8_t k = 1; k <= i; k++)
+					uint8_t range = i;
+					if (j > range)range = j;
+					if (_map->get_size_x() - i > range)range = _map->get_size_x() - i;
+					if (_map->get_size_y() - j > range)range = _map->get_size_y() - j;
+
+					for (uint8_t k = 1; k <= range; k++)
 					{
+						if (i >= k && (value = get_meatchopper_value(target = _map->get_object(i - k, j))) != 0)
+						{
+							if (value > 0)
+								try_move_meatchopper(_map, i, j, -1, 0);
+							else
+							{
+								if (try_move_meatchopper(_map, i, j, 1, 0) || try_move_meatchopper(_map, i, j, 0, 1) || try_move_meatchopper(_map, i, j, 0, -1))
+								{
+								}
+							}
+							object->next_action = client_action_e::ACT;
+							break;
+						}
+						if (j >= k && (value = get_meatchopper_value(target = _map->get_object(i, j - k))) != 0)
+						{
+							if (value > 0)
+							{
+								if (value > 1)
+									try_move_meatchopper(_map, i, j, 0, -1);
+							}
+							else
+							{
+								if (try_move_meatchopper(_map, i, j, 1, 0) || try_move_meatchopper(_map, i, j, 0, 1) || try_move_meatchopper(_map, i, j, -1, 0))
+								{
+								}
+							}
+							object->next_action = client_action_e::ACT;
+							break;
+						}
+						if (i + k < _map->get_size_x() && (value = get_meatchopper_value(target = _map->get_object(i + k, j))) != 0)
+						{
+							if (value > 0)
+							{
+								if (value > 1)
+									try_move_meatchopper(_map, i, j, 1, 0);
+							}
+							else
+							{
+								if (try_move_meatchopper(_map, i, j, -1, 0) || try_move_meatchopper(_map, i, j, 0, 1) || try_move_meatchopper(_map, i, j, 0, -1))
+								{
+								}
+							}
+							object->next_action = client_action_e::ACT;
+							break;
+						}
+						if (j + k < _map->get_size_y() && (value = get_meatchopper_value(target = _map->get_object(i, j + k))) != 0)
+						{
+							if (value > 0)
+							{
+								if (value > 1)
+									try_move_meatchopper(_map, i, j, 0, 1);
+							}
+							else
+							{
+								if (try_move_meatchopper(_map, i, j, 1, 0) || try_move_meatchopper(_map, i, j, 0, -1) || try_move_meatchopper(_map, i, j, -1, 0))
+								{
+								}
+							}
+							object->next_action = client_action_e::ACT;
+							break;
+						}
 					}
-					for (uint8_t k = 1; k <= j; k++)
-					{
-					}
-					for (uint8_t k = 1; k < _map->get_size_x() - i; k++)
-					{
-					}
-					for (uint8_t k = 1; k < _map->get_size_y() - j; k++)
+					if (try_move_meatchopper(_map, i, j, 1, 0) || try_move_meatchopper(_map, i, j, 0, -1) || try_move_meatchopper(_map, i, j, -1, 0) || try_move_meatchopper(_map, i, j, 0, 1))
 					{
 					}
 				}
@@ -319,7 +443,7 @@ public:
 							}
 							for (uint8_t k = 1; k < 4; k++)
 							{
-								if (i - k >= 0)
+								if (i >= k)
 								{
 									if (explode(_map, i - k, j))break;
 								}
@@ -333,7 +457,7 @@ public:
 							}
 							for (uint8_t k = 1; k < 4; k++)
 							{
-								if (j - k >= 0)
+								if (j >= k)
 								{
 									if (explode(_map, i, j - k))break;
 								}

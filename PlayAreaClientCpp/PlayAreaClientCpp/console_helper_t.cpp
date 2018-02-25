@@ -85,8 +85,8 @@ void console_helper_t::show(client_t &_client)
 		case bomberman_objects_e::PLAYER_WITH_BOMB_5: std::cout << '5'; break;
 		case bomberman_objects_e::DEAD_PLAYER: std::cout << 'X'; break;
 
-		case bomberman_objects_e::MEAT_CHOPPER: std::cout << 'M'; break;
-		case bomberman_objects_e::DEAD_MEAT_CHOPPER: std::cout << 'W'; break;
+		case bomberman_objects_e::MEATCHOPPER: std::cout << 'M'; break;
+		case bomberman_objects_e::DEAD_MEATCHOPPER: std::cout << 'W'; break;
 
 		case bomberman_objects_e::BOOM: std::cout << '*'; break;
 		case bomberman_objects_e::BOMB_1: std::cout << '1'; break;
