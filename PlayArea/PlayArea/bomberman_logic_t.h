@@ -4,6 +4,13 @@
 
 class bomberman_logic_t : public game_logic_t
 {
+	int32_t wall_score = 10;
+	int32_t meatchopper_score = 100;
+	int32_t player_score = 1000;
+	int32_t player_dead_penalty = 1;
+	int32_t player_score_min = -10;
+	int32_t player_score_max = INT32_MAX;
+
 public:
 	enum class objects_e : uint8_t
 	{
@@ -102,7 +109,7 @@ public:
 	}
 
 	// Объект на данной точке карты взрывается
-	bool explode(map_t *_map, uint8_t _x, uint8_t _y)
+	bool explode(map_t *_map, player_t *_killer, uint8_t _x, uint8_t _y)
 	{
 		object_s *object = _map->get_object(_x, _y);
 		if (object)
@@ -115,14 +122,20 @@ public:
 			case objects_e::PLAYER_WITH_BOMB_3:
 			case objects_e::PLAYER_WITH_BOMB_4:
 			case objects_e::PLAYER_WITH_BOMB_5:
+				if (object->player)
+					object->player->add_score(-player_dead_penalty, player_score_min, player_score_max);
+			case objects_e::DEAD_PLAYER:
 				object->type = (uint8_t)objects_e::DEAD_PLAYER;
+				if (_killer)
+					_killer->add_score(player_score, player_score_min, player_score_max);
 				return true;
-				break;
 
 			case objects_e::MEATCHOPPER:
+			case objects_e::DEAD_MEATCHOPPER:
 				object->type = (uint8_t)objects_e::DEAD_MEATCHOPPER;
+				if (_killer)
+					_killer->add_score(meatchopper_score, player_score_min, player_score_max);
 				return true;
-				break;
 
 			case objects_e::BOMB_1:
 			case objects_e::BOMB_2:
@@ -132,16 +145,16 @@ public:
 				object->type = (uint8_t)objects_e::BOOM;
 				object->to_delete = true;
 				return true;
-				break;
 
 			case objects_e::DESTRUCTIBLE_WALL:
+			case objects_e::DESTROYED_WALL:
 				object->type = (uint8_t)objects_e::DESTROYED_WALL;
+				if (_killer)
+					_killer->add_score(wall_score, player_score_min, player_score_max);
 				return true;
-				break;
 
 			case objects_e::UNDESTRUCTIBLE_WALL:
 				return true;
-				break;
 			}
 		}
 		else
@@ -177,6 +190,8 @@ public:
 					)
 				{
 					target->type = (uint8_t)objects_e::DEAD_PLAYER;
+					if (target->player)
+						target->player->add_score(-player_dead_penalty, player_score_min, player_score_max);
 					return;
 				}
 			}
@@ -430,6 +445,8 @@ public:
 							if (object->type == (uint8_t)objects_e::PLAYER_WITH_BOMB_1)
 							{
 								object->type = (uint8_t)objects_e::DEAD_PLAYER;
+								if (object->player)
+									object->player->add_score(-player_dead_penalty, player_score_min, player_score_max);
 							}
 							else
 							{
@@ -440,28 +457,28 @@ public:
 							{
 								if (i >= k)
 								{
-									if (explode(_map, i - k, j))break;
+									if (explode(_map, object->player, i - k, j))break;
 								}
 							}
 							for (uint8_t k = 1; k < 4; k++)
 							{
 								if (i + k < _map->get_size_x())
 								{
-									if (explode(_map, i + k, j))break;
+									if (explode(_map, object->player, i + k, j))break;
 								}
 							}
 							for (uint8_t k = 1; k < 4; k++)
 							{
 								if (j >= k)
 								{
-									if (explode(_map, i, j - k))break;
+									if (explode(_map, object->player, i, j - k))break;
 								}
 							}
 							for (uint8_t k = 1; k < 4; k++)
 							{
 								if (j + k < _map->get_size_y())
 								{
-									if (explode(_map, i, j + k))break;
+									if (explode(_map, object->player, i, j + k))break;
 								}
 							}
 						}
