@@ -13,5 +13,8 @@ enum class client_action_e : uint8_t
 
     ACT,
 
-    CREDENTIALS
+    CREDENTIALS,
+
+		GET_NAMES,
+		GET_POINTS
 };

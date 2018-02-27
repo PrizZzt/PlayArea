@@ -53,7 +53,7 @@ session_t::session_t(boost::asio::ip::tcp::socket _socket, server_t *_server) :
     server(_server),
     player(nullptr)
 {
-    result[0] = (uint8_t)server_action_e::RESULT;
+    result[0] = (uint8_t)server_action_e::MESSAGE;
 }
 
 session_t::~session_t()
