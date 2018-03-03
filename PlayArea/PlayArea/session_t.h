@@ -12,12 +12,14 @@ class session_t : public std::enable_shared_from_this<session_t>
 {
     boost::asio::ip::tcp::socket socket;
     uint8_t data[MAX_LENGTH];
-    uint8_t result[2];
+    uint8_t result[MAX_LENGTH_SERVER];
     server_t *server;
     player_t *player;
 
     void do_read();
-    void do_write();
+		void do_write_code(uint8_t _code);
+		void do_write_names();
+		void do_write_points();
 
 public:
     session_t(boost::asio::ip::tcp::socket _socket, server_t *_server);
