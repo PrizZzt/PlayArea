@@ -22,6 +22,28 @@ class client_t
 	uint32_t map_string_length = 0;
 	std::mutex map_string_mutex;
 
+	uint8_t players_count = 0;
+	int32_t *player_points;
+	char **player_names;
+
+	void check_players_count(uint8_t _players_count)
+	{
+		if (players_count == _players_count)return;
+
+		for (uint8_t i = 0; i < players_count; i++)
+		{
+			delete[] player_names[i];
+		}
+		delete[] player_points;
+
+		players_count = _players_count;
+
+		player_names = new char*[players_count];
+		for (uint8_t i = 0; i < players_count; i++)
+			player_names[i] = new char[20];
+		player_points = new int32_t[players_count];
+	}
+
 public:
 	client_t();
 	~client_t();
@@ -39,6 +61,8 @@ public:
 	void right();
 	void left();
 	void act();
+	void get_names();
+	void get_scores();
 
 	std::function<void()> on_turn = nullptr;
 	std::function<void()> on_error = nullptr;

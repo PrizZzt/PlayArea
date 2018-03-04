@@ -1,3 +1,4 @@
+#include "player_points_info_u.h"
 #include "client_t.h"
 
 #define MAX_LENGTH 41
@@ -8,6 +9,8 @@ void client_t::recv_func()
 
 	uint8_t server_action;
 	uint8_t result_code;
+	uint8_t new_players_count;
+	player_points_info_u player_points_info;
 	while (is_recv_thread_running)
 	{
 		try
@@ -41,8 +44,35 @@ void client_t::recv_func()
 			if (on_turn)on_turn();
 			break;
 
-		case 2://RESULT
+		case 2://MESSAGE
 			if (boost::asio::read(socket, boost::asio::buffer(&result_code, 1)) == 0)continue;
+			break;
+
+		case 3://NAMES_LIST
+			if (boost::asio::read(socket, boost::asio::buffer(&new_players_count, 1)) == 0)continue;
+			check_players_count(new_players_count);
+			for (uint8_t i = 0; i < players_count; i++)
+			{
+				uint8_t player_index;
+				int8_t player_name_length;
+				char player_name[20];
+				if (boost::asio::read(socket, boost::asio::buffer(&player_index, 1)) == 0)break;
+				if (boost::asio::read(socket, boost::asio::buffer(&player_name_length, 1)) == 0)break;
+				if (boost::asio::read(socket, boost::asio::buffer(&player_name, player_name_length)) == 0)break;
+				for (int i = 0; i < player_name_length; i++)
+					player_names[player_index][i] = player_name[i];
+				player_names[player_index][player_name_length] = 0;
+			}
+			break;
+
+		case 4://POINTS_LIST
+			if (boost::asio::read(socket, boost::asio::buffer(&new_players_count, 1)) == 0)continue;
+			check_players_count(new_players_count);
+			for (uint8_t i = 0; i < players_count; i++)
+			{
+				if (boost::asio::read(socket, boost::asio::buffer(&player_points_info.data, 5)) == 0)break;
+				player_points[player_points_info.value.player_index] = player_points_info.value.player_points;
+			}
 			break;
 
 		default:
@@ -56,10 +86,17 @@ client_t::client_t() :
     socket(io_context),
     resolver(io_context)
 {
+	player_names = nullptr;
 }
 
 client_t::~client_t()
 {
+	for (uint8_t i = 0; i < players_count; i++)
+	{
+		delete[] player_names[i];
+	}
+	delete[] player_points;
+
 	if (socket.is_open())
 		socket.close();
 
@@ -152,4 +189,16 @@ void client_t::act()
 {
     char act = 5;
     boost::asio::write(socket, boost::asio::buffer(&act, 1));
+}
+
+void client_t::get_names()
+{
+	char get_names = 7;
+	boost::asio::write(socket, boost::asio::buffer(&get_names, 1));
+}
+
+void client_t::get_scores()
+{
+	char get_scores = 8;
+	boost::asio::write(socket, boost::asio::buffer(&get_scores, 1));
 }

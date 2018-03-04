@@ -35,5 +35,8 @@
     <ClInclude Include="bomberman_objects_e.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
+    <ClInclude Include="player_points_info_u.h">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

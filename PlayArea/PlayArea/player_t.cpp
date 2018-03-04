@@ -8,7 +8,7 @@ player_t::player_t(char *_login, char *_password, object_s *_object)
 	strncpy_s(login, _login, 20);
 	strncpy_s(password, _password, 20);
 
-	score = 0;
+	points = 0;
 
 	object = _object;
 }

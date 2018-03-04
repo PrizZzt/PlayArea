@@ -159,6 +159,7 @@
     <ClInclude Include="bomberman_objects_e.h" />
     <ClInclude Include="client_t.h" />
     <ClInclude Include="console_helper_t.h" />
+    <ClInclude Include="player_points_info_u.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

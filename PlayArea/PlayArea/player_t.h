@@ -11,7 +11,7 @@ class player_t
 {
 	char    login[20];    // Логин игрока
 	char    password[20]; // Пароль игрока
-	int32_t score;        // Очки игрока
+	int32_t points;        // Очки игрока
 
 public:
 	object_s *object; // Соответствующий игроку объект на карте, всегда есть
@@ -20,18 +20,18 @@ public:
 	~player_t();
 
 	char *get_player_name() { return login; }
-	int32_t get_score() { return score; }
+	int32_t get_points() { return points; }
 	void set_object_action(client_action_e _action) { if (object)object->next_action = _action; }
-	void add_score(int32_t _score, int32_t _min_score, int32_t _max_score)
+	void add_score(int32_t _points, int32_t _min_points, int32_t _max_points)
 	{
-		if (score + _score < _min_score)
-			score = _min_score;
+		if (points + _points < _min_points)
+			points = _min_points;
 		else
 		{
-			if (score > _max_score - _score)
-				score = _max_score;
+			if (points > _max_points - _points)
+				points = _max_points;
 			else
-				score += _score;
+				points += _points;
 		}
 	}
 

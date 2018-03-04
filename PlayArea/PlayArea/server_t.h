@@ -17,7 +17,7 @@ class server_t
     uint32_t  map_string_length;
 
 		player_t *players[MAX_PLAYERS_COUNT];
-    uint16_t  players_count;
+    uint8_t  players_count;
     std::list<std::shared_ptr<session_t>> sessions;
 
     std::thread update_thread;
@@ -33,8 +33,8 @@ public:
     uint8_t  *get_map_string() { return map_string; }
     uint32_t  get_map_string_length() { return map_string_length; }
 		uint8_t   get_players_count() { return players_count; }
-		char     *get_player_name(uint8_t _player_index) { if (players_count < _player_index)return players[_player_index]->get_player_name(); else return nullptr; }
-		int32_t   get_player_score(uint8_t _player_index) { if (players_count < _player_index)return players[_player_index]->get_score(); else return 0; }
+		char     *get_player_name(uint8_t _player_index) { if (_player_index < players_count)return players[_player_index]->get_player_name(); else return nullptr; }
+		int32_t   get_player_points(uint8_t _player_index) { if (_player_index < players_count)return players[_player_index]->get_points(); else return 0; }
 
     player_t *get_player(char *_login, char *_password);
 

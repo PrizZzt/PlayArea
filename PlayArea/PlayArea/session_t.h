@@ -17,9 +17,7 @@ class session_t : public std::enable_shared_from_this<session_t>
     player_t *player;
 
     void do_read();
-		void do_write_code(uint8_t _code);
-		void do_write_names();
-		void do_write_points();
+		void do_write(uint32_t _length);
 
 public:
     session_t(boost::asio::ip::tcp::socket _socket, server_t *_server);
