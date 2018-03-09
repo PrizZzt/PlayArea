@@ -1,6 +1,7 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #include "TObject.h"
+#include "Engine.h"
 
 ATObject::ATObject()
 {
@@ -25,10 +26,10 @@ void ATObject::Tick(float DeltaTime)
 
 	float speed = 100 * DeltaTime;
 	float distSquared = FVector::DistSquared(pos, target);
-
+	GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, FString::SanitizeFloat(distSquared));
 	if (distSquared > 0)
 	{
-		if (distSquared < DeltaTime * DeltaTime * 100)
+		if (distSquared < 1)
 		{
 			SetActorLocation(target);
 		}
