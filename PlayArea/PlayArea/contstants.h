@@ -1,7 +1,7 @@
 #pragma once
 
 #define MAX_LENGTH        41                           // ћаксимальна€ длина сообщени€ от клиента
-#define MAX_LENGTH_SERVER (256 * (1 + 1 + 20)) + 1 + 1 // ћаксимальна€ длина сообщени€ от сервера
+#define MAX_LENGTH_SERVER (255 * (1 + 1 + 20)) + 1 + 1 // ћаксимальна€ длина сообщени€ от сервера
 #define MAX_PLAYERS_COUNT 0xff                         // ћаксимальное количество игроков
 
 /*

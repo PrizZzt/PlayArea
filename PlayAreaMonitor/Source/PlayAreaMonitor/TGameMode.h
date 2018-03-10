@@ -4,13 +4,15 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/GameModeBase.h"
-#include "PlayAreaMonitorGameModeBase.generated.h"
+#include "TGameMode.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class PLAYAREAMONITOR_API APlayAreaMonitorGameModeBase : public AGameModeBase
+class PLAYAREAMONITOR_API ATGameMode : public AGameModeBase
 {
 	GENERATED_BODY()
+
+		ATGameMode();
 };
