@@ -39,6 +39,17 @@ public:
 	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Meshes")
 		TAssetPtr<UStaticMesh> BombMesh;
 
+	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Materials")
+		TAssetPtr<UMaterialInterface> UndestructibleWallMaterial;
+	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Materials")
+		TAssetPtr<UMaterialInterface> DestructibleWallMaterial;
+	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Materials")
+		TAssetPtr<UMaterialInterface> PlayerMaterial;
+	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Materials")
+		TAssetPtr<UMaterialInterface> MeatchopperMaterial;
+	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Materials")
+		TAssetPtr<UMaterialInterface> BombMaterial;
+
 	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Types")
 		TSubclassOf<ATObject> ObjectType;
 

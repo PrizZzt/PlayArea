@@ -60,15 +60,18 @@ void ATObject::SetType(int _type)
 	if (Type != _type && gameInstance)
 	{
 		UStaticMesh *new_mesh;
+		UMaterialInterface *new_material;
 		switch (_type)
 		{
 		case 1://UNDESTRUCTIBLE_WALL
 			new_mesh = gameInstance->UndestructibleWallMesh.LoadSynchronous();
+			new_material = gameInstance->UndestructibleWallMaterial.LoadSynchronous();
 			break;
 
 		case 2://DESTRUCTIBLE_WALL
 		case 3://DESTROYED_WALL
 			new_mesh = gameInstance->DestructibleWallMesh.LoadSynchronous();
+			new_material = gameInstance->DestructibleWallMaterial.LoadSynchronous();
 			break;
 
 		case 4://PLAYER
@@ -79,15 +82,18 @@ void ATObject::SetType(int _type)
 		case 9://PLAYER_WITH_BOMB_5
 		case 10://DEAD_PLAYER
 			new_mesh = gameInstance->PlayerMesh.LoadSynchronous();
+			new_material = gameInstance->PlayerMaterial.LoadSynchronous();
 			break;
 
 		case 11://MEATCHOPPER
 		case 12://DEAD_MEATCHOPPER
 			new_mesh = gameInstance->MeatchopperMesh.LoadSynchronous();
+			new_material = gameInstance->MeatchopperMaterial.LoadSynchronous();
 			break;
 
 		case 13://BOOM
 			new_mesh = nullptr;
+			new_material = nullptr;
 			break;
 
 		case 14://BOMB_1
@@ -96,12 +102,14 @@ void ATObject::SetType(int _type)
 		case 17://BOMB_4
 		case 18://BOMB_5
 			new_mesh = gameInstance->UndestructibleWallMesh.LoadSynchronous();
+			new_material = gameInstance->BombMaterial.LoadSynchronous();
 			break;
 
 		default:
 			return;
 		}
 		Body->SetStaticMesh(new_mesh);
+		Body->SetMaterial(0, new_material);
 		Type = _type;
 	}
 }
