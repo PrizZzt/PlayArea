@@ -246,7 +246,7 @@ public:
 					_map->set_object(new object_s(0, objects_e::UNDESTRUCTIBLE_WALL, false), i, j);
 			}
 		}
-		for (uint8_t i = 0; i < 20; i++)
+		for (uint8_t i = 0; i < 40; i++)
 		{
 			object_s *wall = new object_s(i, objects_e::DESTRUCTIBLE_WALL, false);
 			if (_map->place_object_in_random_location(wall) == false)

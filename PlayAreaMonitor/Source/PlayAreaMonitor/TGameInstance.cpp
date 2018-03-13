@@ -106,6 +106,6 @@ void UTGameInstance::Stop()
 		receive_thread.join();
 	}
 
-	if (Socket->GetConnectionState() == ESocketConnectionState::SCS_Connected)
+	if (Socket && Socket->GetConnectionState() == ESocketConnectionState::SCS_Connected)
 		Socket->Close();
 }

@@ -101,7 +101,7 @@ void ATObject::SetType(int _type)
 		case 16://BOMB_3
 		case 17://BOMB_4
 		case 18://BOMB_5
-			new_mesh = gameInstance->UndestructibleWallMesh.LoadSynchronous();
+			new_mesh = gameInstance->BombMesh.LoadSynchronous();
 			new_material = gameInstance->BombMaterial.LoadSynchronous();
 			break;
 
