@@ -19,6 +19,12 @@ void UTGameInstance::receive_loop()
 			AsyncTask(ENamedThreads::GameThread, [&]() {GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, "Not map arrived!"); });
 			continue;
 		}
+
+		for (auto object : objects)
+		{
+			object->to_delete = true;
+		}
+
 		AsyncTask(ENamedThreads::GameThread, [&]()
 		{
 			GEngine->AddOnScreenDebugMessage(-1, 1.0f, FColor::Yellow, "Sum = " + FString::FromInt(readed));
@@ -60,6 +66,7 @@ void UTGameInstance::receive_loop()
 							if (resultPtr)
 							{
 								result = *resultPtr;
+								result->to_delete = false;
 							}
 						}
 
@@ -79,6 +86,16 @@ void UTGameInstance::receive_loop()
 					position += 2;
 				}
 			}
+
+			objects.RemoveAll([](ATObject *_object)
+			{
+				if (_object->to_delete)
+				{
+					_object->Destroy();
+					return true;
+				}
+				return false; 
+			});
 		});
 	}
 }

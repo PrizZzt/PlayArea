@@ -22,6 +22,8 @@ protected:
 	virtual void BeginPlay() override;
 
 public:
+	bool to_delete;
+
 	UPROPERTY(BlueprintReadWrite, VisibleAnywhere)
 		uint8 ID;
 	UPROPERTY(BlueprintReadOnly, VisibleAnywhere)

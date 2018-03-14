@@ -10,6 +10,8 @@ ATObject::ATObject()
 	PrimaryActorTick.bCanEverTick = true;
 	gameInstance = nullptr;
 
+	to_delete = false;
+
 	ID = 0;
 	Type = 0;
 }
