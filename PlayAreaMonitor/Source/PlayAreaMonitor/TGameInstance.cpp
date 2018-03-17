@@ -27,12 +27,12 @@ void UTGameInstance::receive_loop()
 
 		AsyncTask(ENamedThreads::GameThread, [&]()
 		{
-			GEngine->AddOnScreenDebugMessage(-1, 1.0f, FColor::Yellow, "Sum = " + FString::FromInt(readed));
+			//GEngine->AddOnScreenDebugMessage(-1, 1.0f, FColor::Yellow, "Sum = " + FString::FromInt(readed));
 
 			size_x = data[1];
 			size_y = data[2];
-			GEngine->AddOnScreenDebugMessage(-1, 1.0f, FColor::Yellow, "X = " + FString::FromInt(size_x));
-			GEngine->AddOnScreenDebugMessage(-1, 1.0f, FColor::Yellow, "Y = " + FString::FromInt(size_y));
+			//GEngine->AddOnScreenDebugMessage(-1, 1.0f, FColor::Yellow, "X = " + FString::FromInt(size_x));
+			//GEngine->AddOnScreenDebugMessage(-1, 1.0f, FColor::Yellow, "Y = " + FString::FromInt(size_y));
 			int position = 3;
 			for (uint8_t j = 0; j < size_y; j++)
 			{
@@ -138,6 +138,11 @@ void UTGameInstance::receive_loop()
 			});
 		});
 	}
+}
+
+void UTGameInstance::Shutdown()
+{
+	Stop();
 }
 
 void UTGameInstance::Start(FString _address, int32 _port)

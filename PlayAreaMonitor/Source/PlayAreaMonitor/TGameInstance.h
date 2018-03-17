@@ -43,6 +43,8 @@ public:
 
 	FSocket *Socket;
 
+	void Shutdown() override;
+
 	UFUNCTION(BlueprintCallable)
 		void Start(FString _address, int32 _port);
 	UFUNCTION(BlueprintCallable)

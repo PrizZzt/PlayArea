@@ -44,8 +44,11 @@ public:
 		void SetTarget(int _X, int _Y);
 	UFUNCTION(BlueprintCallable)
 		void SetType(int _type);
+
 	UFUNCTION(BlueprintImplementableEvent)
 		void SetTypeInternal(int _new_type, int _old_type);
+	UFUNCTION(BlueprintImplementableEvent)
+		void IsResurrectType(int _new_type, bool& _result);
 
 	static uint8_t GetGroup(uint8_t _type)
 	{
