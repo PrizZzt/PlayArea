@@ -28,30 +28,18 @@ private:
 	uint8_t size_x, size_y;
 
 public:
-	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Meshes")
-		TAssetPtr<UStaticMesh> UndestructibleWallMesh;
-	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Meshes")
-		TAssetPtr<UStaticMesh> DestructibleWallMesh;
-	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Meshes")
-		TAssetPtr<UStaticMesh> PlayerMesh;
-	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Meshes")
-		TAssetPtr<UStaticMesh> MeatchopperMesh;
-	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Meshes")
-		TAssetPtr<UStaticMesh> BombMesh;
-
-	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Materials")
-		TAssetPtr<UMaterialInterface> UndestructibleWallMaterial;
-	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Materials")
-		TAssetPtr<UMaterialInterface> DestructibleWallMaterial;
-	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Materials")
-		TAssetPtr<UMaterialInterface> PlayerMaterial;
-	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Materials")
-		TAssetPtr<UMaterialInterface> MeatchopperMaterial;
-	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Materials")
-		TAssetPtr<UMaterialInterface> BombMaterial;
-
-	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Types")
-		TSubclassOf<ATObject> ObjectType;
+	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Objects")
+		TSubclassOf<ATObject> UndestructibleWall;
+	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Objects")
+		TSubclassOf<ATObject> DestructibleWall;
+	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Objects")
+		TSubclassOf<ATObject> Player;
+	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Objects")
+		TSubclassOf<ATObject> Meatchopper;
+	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Objects")
+		TSubclassOf<ATObject> Bomb;
+	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Objects")
+		TSubclassOf<ATObject> Boom;
 
 	FSocket *Socket;
 

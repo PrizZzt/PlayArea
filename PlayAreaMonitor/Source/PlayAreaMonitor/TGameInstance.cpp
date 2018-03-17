@@ -73,7 +73,47 @@ void UTGameInstance::receive_loop()
 						if (result == nullptr)
 						{
 							FVector initialLocation(i * 100, j * 100, 0);
-							result = GetWorld()->SpawnActor<ATObject>(ObjectType, initialLocation, FRotator::ZeroRotator);
+							switch (type)
+							{
+								case 1://UNDESTRUCTIBLE_WALL
+									result = GetWorld()->SpawnActor<ATObject>(UndestructibleWall, initialLocation, FRotator::ZeroRotator);
+									break;
+
+								case 2://DESTRUCTIBLE_WALL
+								case 3://DESTROYED_WALL
+									result = GetWorld()->SpawnActor<ATObject>(DestructibleWall, initialLocation, FRotator::ZeroRotator);
+									break;
+
+								case 4://PLAYER
+								case 5://PLAYER_WITH_BOMB_1
+								case 6://PLAYER_WITH_BOMB_2
+								case 7://PLAYER_WITH_BOMB_3
+								case 8://PLAYER_WITH_BOMB_4
+								case 9://PLAYER_WITH_BOMB_5
+								case 10://DEAD_PLAYER
+									result = GetWorld()->SpawnActor<ATObject>(Player, initialLocation, FRotator::ZeroRotator);
+									break;
+
+								case 11://MEATCHOPPER
+								case 12://DEAD_MEATCHOPPER
+									result = GetWorld()->SpawnActor<ATObject>(Meatchopper, initialLocation, FRotator::ZeroRotator);
+									break;
+
+								case 13://BOOM
+									result = GetWorld()->SpawnActor<ATObject>(Boom, initialLocation, FRotator::ZeroRotator);
+									break;
+
+								case 14://BOMB_1
+								case 15://BOMB_2
+								case 16://BOMB_3
+								case 17://BOMB_4
+								case 18://BOMB_5
+									result = GetWorld()->SpawnActor<ATObject>(Bomb, initialLocation, FRotator::ZeroRotator);
+									break;
+
+								default:
+									return;
+							}
 							result->ID = id;
 							result->BaseX = i;
 							result->BaseY = j;

@@ -14,9 +14,6 @@ class PLAYAREAMONITOR_API ATObject : public AActor
 	GENERATED_BODY()
 		UTGameInstance *gameInstance;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
-		class UStaticMeshComponent *Body;
-
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
@@ -47,6 +44,8 @@ public:
 		void SetTarget(int _X, int _Y);
 	UFUNCTION(BlueprintCallable)
 		void SetType(int _type);
+	UFUNCTION(BlueprintImplementableEvent)
+		void SetTypeInternal(int _new_type, int _old_type);
 
 	static uint8_t GetGroup(uint8_t _type)
 	{
