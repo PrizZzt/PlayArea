@@ -18,16 +18,11 @@ class PLAYAREAMONITOR_API UTGameInstance : public UGameInstance
 {
 	GENERATED_BODY()
 
-private:
-	std::thread receive_thread;
-	bool is_running;
-	void receive_loop();
-
+public:
+	FSocket *Socket;
 	TArray<ATObject*> objects;
-
 	uint8_t size_x, size_y;
 
-public:
 	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Objects")
 		TSubclassOf<ATObject> UndestructibleWall;
 	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Objects")
@@ -41,12 +36,18 @@ public:
 	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Objects")
 		TSubclassOf<ATObject> Boom;
 
-	FSocket *Socket;
-
 	void Shutdown() override;
 
 	UFUNCTION(BlueprintCallable)
 		void Start(FString _address, int32 _port);
 	UFUNCTION(BlueprintCallable)
 		void Stop();
+
+	void SetSize(uint8_t _size_x, uint8_t _size_y)
+	{
+		size_x = _size_x;
+		size_y = _size_y;
+	}
+
+	void UpdateObject(uint8_t _id, uint8_t _type, uint8_t _x, uint8_t _y);
 };
