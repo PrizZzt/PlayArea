@@ -19,6 +19,7 @@ protected:
 	virtual void BeginPlay() override;
 
 public:
+	const static uint8_t PLAYER_GROUP = 2;
 	bool to_delete;
 
 	UPROPERTY(BlueprintReadWrite, VisibleAnywhere)
@@ -46,9 +47,11 @@ public:
 		void SetType(int _type);
 
 	UFUNCTION(BlueprintImplementableEvent)
-		void SetTypeInternal(int _new_type, int _old_type);
+		void SetType_BP(int _new_type, int _old_type);
 	UFUNCTION(BlueprintImplementableEvent)
-		void IsResurrectType(int _new_type, bool& _result);
+		void IsResurrectType_BP(int _new_type, bool& _result);
+	UFUNCTION(BlueprintImplementableEvent)
+		void SetText_BP(const FString &_text);
 
 	static uint8_t GetGroup(uint8_t _type)
 	{
@@ -74,7 +77,7 @@ public:
 		case 8://PLAYER_WITH_BOMB_4
 		case 9://PLAYER_WITH_BOMB_5
 		case 10://DEAD_PLAYER
-			return 2;
+			return PLAYER_GROUP;
 
 		case 11://MEATCHOPPER
 		case 12://DEAD_MEATCHOPPER

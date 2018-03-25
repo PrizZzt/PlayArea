@@ -8,6 +8,7 @@
 #include "Networking.h"
 #include "Engine/GameInstance.h"
 #include "TObject.h"
+#include "FPlayerInfo.h"
 #include "TGameInstance.generated.h"
 
 /**
@@ -17,6 +18,8 @@ UCLASS()
 class PLAYAREAMONITOR_API UTGameInstance : public UGameInstance
 {
 	GENERATED_BODY()
+
+		bool check_names;
 
 public:
 	FSocket *Socket;
@@ -36,6 +39,9 @@ public:
 	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Objects")
 		TSubclassOf<ATObject> Boom;
 
+	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "PlayerInfo")
+	TArray<FPlayerInfo> PlayerInfo;
+
 	void Shutdown() override;
 
 	UFUNCTION(BlueprintCallable)
@@ -50,4 +56,7 @@ public:
 	}
 
 	void UpdateObject(uint8_t _id, uint8_t _type, uint8_t _x, uint8_t _y);
+	void UpdatePlayerInfo(uint8_t _id, FString &_name);
+	void UpdatePlayerInfo(uint8_t _id, int32_t _points);
+	void CheckAdditionalInfo();
 };

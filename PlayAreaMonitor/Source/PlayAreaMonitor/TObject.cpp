@@ -68,10 +68,10 @@ void ATObject::SetType(int _type)
 	if (Type != _type && gameInstance)
 	{
 		if (Type != 0)
-			SetTypeInternal(_type, Type);
+			SetType_BP(_type, Type);
 		Type = _type;
 		bool is_resurrect_type;
-		IsResurrectType(Type, is_resurrect_type);
+		IsResurrectType_BP(Type, is_resurrect_type);
 		if (is_resurrect_type)
 			SetActorLocation(FVector(ToX * 100, ToY * 100, 0));
 	}

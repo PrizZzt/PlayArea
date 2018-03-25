@@ -98,6 +98,7 @@ void UTGameInstance::UpdateObject(uint8_t _id, uint8_t _type, uint8_t _x, uint8_
 		case 9://PLAYER_WITH_BOMB_5
 		case 10://DEAD_PLAYER
 			result = GetWorld()->SpawnActor<ATObject>(Player, initialLocation, FRotator::ZeroRotator);
+			check_names = true;
 			break;
 
 		case 11://MEATCHOPPER
@@ -128,4 +129,63 @@ void UTGameInstance::UpdateObject(uint8_t _id, uint8_t _type, uint8_t _x, uint8_
 
 	result->SetTarget(_x, _y);
 	result->SetType(_type);
+}
+
+void UTGameInstance::UpdatePlayerInfo(uint8_t _id, FString &_name)
+{
+	if (objects.Num() > 0)
+	{
+		ATObject **resultPtr = objects.FindByPredicate([&](const ATObject *_t)
+		{
+			return (_t->ID == _id && ATObject::GetGroup(_t->Type) == ATObject::PLAYER_GROUP);
+		});
+		if (resultPtr)
+		{
+			(*resultPtr)->SetText_BP(_name);
+		}
+	}
+
+	FPlayerInfo *resultPtr = PlayerInfo.FindByPredicate([&](const FPlayerInfo &_t)
+	{
+		return _t.ID == _id;
+	});
+	if (resultPtr)
+	{
+		(*resultPtr).Name = _name;
+	}
+	else
+	{
+		PlayerInfo.Add(FPlayerInfo(_id, _name));
+	}
+}
+
+void UTGameInstance::UpdatePlayerInfo(uint8_t _id, int32_t _points)
+{
+	FPlayerInfo *resultPtr = PlayerInfo.FindByPredicate([&](const FPlayerInfo &_t)
+	{
+		return _t.ID == _id;
+	});
+	if (resultPtr)
+	{
+		(*resultPtr).Points = _points;
+	}
+	else
+	{
+		PlayerInfo.Add(FPlayerInfo(_id, _points));
+	}
+}
+
+void UTGameInstance::CheckAdditionalInfo()
+{
+	uint8 data = 7;
+	int32 sent;
+	if (check_names)
+	{
+		data = 7;
+		Socket->Send(&data, 1, sent);
+		check_names = false;
+	}
+	//TODO Выяснить, почему не работает запрос имен при раскомменчивании этого кода
+	//data = 8;
+	//Socket->Send(&data, 1, sent);
 }

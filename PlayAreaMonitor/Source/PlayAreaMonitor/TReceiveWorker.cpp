@@ -8,7 +8,7 @@ TReceiveWorker::TReceiveWorker(UTGameInstance *_game) :
 	game(_game),
 	StopTaskCounter(0)
 {
-	Thread = FRunnableThread::Create(this, TEXT("TReceiveWorker"), 0, TPri_BelowNormal); //windows default = 8mb for thread, could specify more
+	Thread = FRunnableThread::Create(this, TEXT("TReceiveWorker"), 0, TPri_BelowNormal);
 }
 
 TReceiveWorker::~TReceiveWorker()
@@ -26,6 +26,7 @@ uint32 TReceiveWorker::Run()
 {
 	uint8 data[MAX_LENGTH_SERVER];
 	int32 readed;
+	uint32 position;
 
 	while (
 		StopTaskCounter.GetValue() == 0 &&
@@ -35,49 +36,76 @@ uint32 TReceiveWorker::Run()
 		game->Socket->Recv((uint8*)&data, MAX_LENGTH_SERVER, readed);
 		if (readed == 0)continue;
 
-		if (data[0] != 1)
-		{
-			AsyncTask(ENamedThreads::GameThread, [&]() {GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, "Not map arrived!"); });
-			return 0;
-		}
-
-		for (auto object : game->objects)
-		{
-			object->to_delete = true;
-		}
-
 		AsyncTask(ENamedThreads::GameThread, [&]()
 		{
 			GEngine->AddOnScreenDebugMessage(-1, 1.0f, FColor::Yellow, "Sum = " + FString::FromInt(readed));
-
-			game->SetSize(data[1], data[2]);
-			GEngine->AddOnScreenDebugMessage(-1, 1.0f, FColor::Yellow, "X = " + FString::FromInt(game->size_x));
-			GEngine->AddOnScreenDebugMessage(-1, 1.0f, FColor::Yellow, "Y = " + FString::FromInt(game->size_y));
-			int position = 3;
-			for (uint8_t j = 0; j < game->size_y; j++)
+			switch (data[0])
 			{
-				for (uint8_t i = 0; i < game->size_x; i++)
+			case 1://MAP
+				for (auto object : game->objects)
 				{
-					if (data[position] != 0)
+					object->to_delete = true;
+				}
+
+				game->SetSize(data[1], data[2]);
+				GEngine->AddOnScreenDebugMessage(-1, 1.0f, FColor::Yellow, "X = " + FString::FromInt(game->size_x));
+				GEngine->AddOnScreenDebugMessage(-1, 1.0f, FColor::Yellow, "Y = " + FString::FromInt(game->size_y));
+				position = 3;
+				for (uint8_t j = 0; j < game->size_y; j++)
+				{
+					for (uint8_t i = 0; i < game->size_x; i++)
 					{
-						uint8_t id = data[position + 1];
-						uint8_t type = data[position];
+						if (data[position] != 0)
+						{
+							uint8_t id = data[position + 1];
+							uint8_t type = data[position];
 
-						game->UpdateObject(id, type, i, j);
+							game->UpdateObject(id, type, i, j);
+						}
+						position += 2;
 					}
-					position += 2;
 				}
-			}
 
-			game->objects.RemoveAll([](ATObject *_object)
-			{
-				if (_object->to_delete)
+				game->objects.RemoveAll([](ATObject *_object)
 				{
-					_object->Destroy();
-					return true;
+					if (_object->to_delete)
+					{
+						_object->Destroy();
+						return true;
+					}
+					return false;
+				});
+
+				game->CheckAdditionalInfo();
+				break;
+
+			case 3://NAMES_LIST
+				GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, "NAMES_LIST");
+				position = 2;
+				for (uint8 i = 0; i < data[1]; i++)
+				{
+					uint8 id = data[position];
+					position++;
+					uint8 player_name_length = data[position];
+					position++;
+					FString player_name = FString();
+					for (uint8 j = 0; j < player_name_length; j++)
+					{
+						player_name.AppendChar(data[position]);
+						position++;
+					}
+					game->UpdatePlayerInfo(id, player_name);
 				}
-				return false;
-			});
+				break;
+
+			case 4://POINTS_LIST
+				GEngine->AddOnScreenDebugMessage(-1, 1.0f, FColor::Green, "POINTS_LIST");
+				break;
+
+			default:
+				GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, "Unknown message type!");
+				break;
+			}
 		});
 	}
 
