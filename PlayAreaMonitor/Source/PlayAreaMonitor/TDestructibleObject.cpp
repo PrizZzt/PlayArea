@@ -23,7 +23,7 @@ void ATDestructibleObject::Tick(float DeltaTime)
 
 void ATDestructibleObject::Destroy()
 {
-	Body->ApplyDamage(100, GetActorLocation(), GetActorLocation(), 500);
+	Body->ApplyDamage(100, GetActorLocation(), GetActorLocation(), 5000);
 }
 
 void ATDestructibleObject::Renew()
