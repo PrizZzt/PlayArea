@@ -8,7 +8,7 @@ public class PlayAreaMonitor : ModuleRules
 	{
 		PCHUsage = PCHUsageMode.UseExplicitOrSharedPCHs;
 
-		PublicDependencyModuleNames.AddRange(new string[] { "Core", "CoreUObject", "Engine", "InputCore", "Sockets", "Networking" , "ApexDestruction" });
+		PublicDependencyModuleNames.AddRange(new string[] { "Core", "CoreUObject", "Engine", "InputCore", "Sockets", "Networking" , "ApexDestruction", "UMG" });
 
 		PrivateDependencyModuleNames.AddRange(new string[] {  });
 

@@ -3,6 +3,18 @@
 #include "TGameInstance.h"
 #include "Engine.h"
 #include "TReceiveWorker.h"
+#include "UMG.h"
+
+void UTGameInstance::Init()
+{
+	if (PointsTable)
+	{
+		if (!PointsTableInstance)
+		{
+			PointsTableInstance = CreateWidget<UTPointsTable>(this, PointsTable);
+		}
+	}
+}
 
 void UTGameInstance::Shutdown()
 {
@@ -131,7 +143,7 @@ void UTGameInstance::UpdateObject(uint8_t _id, uint8_t _type, uint8_t _x, uint8_
 	result->SetType(_type);
 }
 
-void UTGameInstance::UpdatePlayerInfo(uint8_t _id, FString &_name)
+void UTGameInstance::UpdatePlayerName(uint8_t _id, FString &_name)
 {
 	if (objects.Num() > 0)
 	{
@@ -143,35 +155,6 @@ void UTGameInstance::UpdatePlayerInfo(uint8_t _id, FString &_name)
 		{
 			(*resultPtr)->SetText_BP(_name);
 		}
-	}
-
-	FPlayerInfo *resultPtr = PlayerInfo.FindByPredicate([&](const FPlayerInfo &_t)
-	{
-		return _t.ID == _id;
-	});
-	if (resultPtr)
-	{
-		(*resultPtr).Name = _name;
-	}
-	else
-	{
-		PlayerInfo.Add(FPlayerInfo(_id, _name));
-	}
-}
-
-void UTGameInstance::UpdatePlayerInfo(uint8_t _id, int32_t _points)
-{
-	FPlayerInfo *resultPtr = PlayerInfo.FindByPredicate([&](const FPlayerInfo &_t)
-	{
-		return _t.ID == _id;
-	});
-	if (resultPtr)
-	{
-		(*resultPtr).Points = _points;
-	}
-	else
-	{
-		PlayerInfo.Add(FPlayerInfo(_id, _points));
 	}
 }
 
@@ -186,6 +169,6 @@ void UTGameInstance::CheckAdditionalInfo()
 		check_names = false;
 	}
 	//TODO Выяснить, почему не работает запрос имен при раскомменчивании этого кода
-	//data = 8;
-	//Socket->Send(&data, 1, sent);
+	data = 8;
+	Socket->Send(&data, 1, sent);
 }

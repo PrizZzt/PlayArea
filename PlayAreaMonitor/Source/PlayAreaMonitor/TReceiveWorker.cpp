@@ -2,6 +2,12 @@
 #include "Engine.h"
 #include "../../../PlayArea/PlayArea/contstants.h"
 
+union IntCharConvertor
+{
+	int32_t i;
+	uint8_t c[4];
+};
+
 TReceiveWorker *TReceiveWorker::Runnable = nullptr;
 
 TReceiveWorker::TReceiveWorker(UTGameInstance *_game) :
@@ -31,7 +37,8 @@ uint32 TReceiveWorker::Run()
 	while (
 		StopTaskCounter.GetValue() == 0 &&
 		game->Socket &&
-		game->Socket->GetConnectionState() == ESocketConnectionState::SCS_Connected)
+		game->Socket->GetConnectionState() == ESocketConnectionState::SCS_Connected
+		)
 	{
 		game->Socket->Recv((uint8*)&data, MAX_LENGTH_SERVER, readed);
 		if (readed == 0)continue;
@@ -42,7 +49,7 @@ uint32 TReceiveWorker::Run()
 			switch (data[0])
 			{
 			case 1://MAP
-				for (auto object : game->objects)
+				for (auto &object : game->objects)
 				{
 					object->to_delete = true;
 				}
@@ -81,6 +88,7 @@ uint32 TReceiveWorker::Run()
 
 			case 3://NAMES_LIST
 				GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, "NAMES_LIST");
+				game->PointsTableInstance->StartUpdate_BP();
 				position = 2;
 				for (uint8 i = 0; i < data[1]; i++)
 				{
@@ -94,12 +102,24 @@ uint32 TReceiveWorker::Run()
 						player_name.AppendChar(data[position]);
 						position++;
 					}
-					game->UpdatePlayerInfo(id, player_name);
+					game->PointsTableInstance->SetPlayerName_BP(id, player_name);
+					game->UpdatePlayerName(id, player_name);
 				}
+				game->PointsTableInstance->EndUpdate_BP();
 				break;
 
 			case 4://POINTS_LIST
 				GEngine->AddOnScreenDebugMessage(-1, 1.0f, FColor::Green, "POINTS_LIST");
+				game->PointsTableInstance->StartUpdate_BP();
+				position = 2;
+				for (uint8 i = 0; i < data[1]; i++)
+				{
+					uint8_t player_id = data[position];
+					int32_t points = *((int32_t*)&data[position + 1]);
+					game->PointsTableInstance->SetPlayerPoints_BP(player_id, points);
+					position += 5;
+				}
+				game->PointsTableInstance->EndUpdate_BP();
 				break;
 
 			default:

@@ -8,7 +8,8 @@
 #include "Networking.h"
 #include "Engine/GameInstance.h"
 #include "TObject.h"
-#include "FPlayerInfo.h"
+#include "TPointsRow.h"
+#include "TPointsTable.h"
 #include "TGameInstance.generated.h"
 
 /**
@@ -39,10 +40,15 @@ public:
 	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Objects")
 		TSubclassOf<ATObject> Boom;
 
-	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "PlayerInfo")
-	TArray<FPlayerInfo> PlayerInfo;
+	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "UI")
+		TSubclassOf<UTPointsRow> PointsRow;
+	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "UI")
+		TSubclassOf<UTPointsTable> PointsTable;
+	UPROPERTY(/*BlueprintReadOnly, EditAnywhere, Category = "UI"*/)
+		UTPointsTable *PointsTableInstance;
 
-	void Shutdown() override;
+	void Init()override;
+	void Shutdown()override;
 
 	UFUNCTION(BlueprintCallable)
 		void Start(FString _address, int32 _port);
@@ -56,7 +62,6 @@ public:
 	}
 
 	void UpdateObject(uint8_t _id, uint8_t _type, uint8_t _x, uint8_t _y);
-	void UpdatePlayerInfo(uint8_t _id, FString &_name);
-	void UpdatePlayerInfo(uint8_t _id, int32_t _points);
+	void UpdatePlayerName(uint8_t _id, FString &_name);
 	void CheckAdditionalInfo();
 };
