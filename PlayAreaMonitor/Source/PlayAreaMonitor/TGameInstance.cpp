@@ -12,6 +12,8 @@ void UTGameInstance::Init()
 		if (!PointsTableInstance)
 		{
 			PointsTableInstance = CreateWidget<UTPointsTable>(this, PointsTable);
+			PointsTableInstance->InitList_BP();
+			PointsTableInstance->gameInstance = this;
 		}
 	}
 }
@@ -160,15 +162,16 @@ void UTGameInstance::UpdatePlayerName(uint8_t _id, FString &_name)
 
 void UTGameInstance::CheckAdditionalInfo()
 {
-	uint8 data = 7;
+	uint8 data;
 	int32 sent;
 	if (check_names)
 	{
 		data = 7;
-		Socket->Send(&data, 1, sent);
 		check_names = false;
 	}
-	//TODO Выяснить, почему не работает запрос имен при раскомменчивании этого кода
-	data = 8;
+	else
+	{
+		data = 8;
+	}
 	Socket->Send(&data, 1, sent);
 }

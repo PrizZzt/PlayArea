@@ -2,8 +2,11 @@
 
 #pragma once
 
+class UTGameInstance;
+
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
+#include "ScrollBox.h"
 #include "TPointsTable.generated.h"
 
 /**
@@ -15,12 +18,15 @@ class PLAYAREAMONITOR_API UTPointsTable : public UUserWidget
 	GENERATED_BODY()
 
 public:
+	UTGameInstance *gameInstance;
+
+	UPROPERTY(BlueprintReadWrite, VisibleAnywhere)
+		UScrollBox *List;
 	UFUNCTION(BlueprintImplementableEvent)
-		void StartUpdate_BP();
-	UFUNCTION(BlueprintImplementableEvent)
-		void SetPlayerName_BP(uint8 _id, const FString &_name);
-	UFUNCTION(BlueprintImplementableEvent)
-		void SetPlayerPoints_BP(uint8 _id, int32 _points);
-	UFUNCTION(BlueprintImplementableEvent)
-		void EndUpdate_BP();
+		void InitList_BP();
+
+	void StartUpdate();
+	void SetPlayerName(uint8 _id, const FString &_name);
+	void SetPlayerPoints(uint8 _id, int32 _points);
+	void EndUpdate();
 };
