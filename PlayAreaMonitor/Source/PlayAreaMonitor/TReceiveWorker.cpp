@@ -86,7 +86,7 @@ uint32 TReceiveWorker::Run()
 				game->CheckAdditionalInfo();
 				break;
 
-			case 3://NAMES_LIST
+			case 4://NAMES_LIST
 				GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, "NAMES_LIST");
 				game->PointsTableInstance->StartUpdate();
 				position = 2;
@@ -108,7 +108,7 @@ uint32 TReceiveWorker::Run()
 				game->PointsTableInstance->EndUpdate();
 				break;
 
-			case 4://POINTS_LIST
+			case 5://POINTS_LIST
 				GEngine->AddOnScreenDebugMessage(-1, 1.0f, FColor::Green, "POINTS_LIST");
 				game->PointsTableInstance->StartUpdate();
 				position = 2;
