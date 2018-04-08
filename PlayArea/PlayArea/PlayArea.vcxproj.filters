@@ -59,8 +59,5 @@
     <ClInclude Include="bomberman_logic_t.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
-    <ClInclude Include="player_points_info_u.h">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
   </ItemGroup>
 </Project>

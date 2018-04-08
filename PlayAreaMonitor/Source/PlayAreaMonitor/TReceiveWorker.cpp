@@ -115,7 +115,7 @@ uint32 TReceiveWorker::Run()
 				for (uint8 i = 0; i < data[1]; i++)
 				{
 					uint8_t player_id = data[position];
-					int32_t points = *((int32_t*)&data[position + 1]);
+					int32_t points = (data[position + 1] << 24) + (data[position + 2] << 16) + (data[position + 3] << 8) + data[position + 4];
 					game->PointsTableInstance->SetPlayerPoints(player_id, points);
 					position += 5;
 				}

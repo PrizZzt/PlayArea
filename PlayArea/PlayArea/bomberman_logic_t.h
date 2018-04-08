@@ -9,7 +9,7 @@ class bomberman_logic_t : public game_logic_t
 	int32_t player_score = 1000;
 	int32_t player_dead_penalty = 1;
 	int32_t player_score_min = -10;
-	int32_t player_score_max = INT32_MAX;
+	int32_t player_score_max = INT32_MAX - 1;
 
 public:
 	enum class objects_e : uint8_t
@@ -126,7 +126,7 @@ public:
 					object->player->add_score(-player_dead_penalty, player_score_min, player_score_max);
 			case objects_e::DEAD_PLAYER:
 				object->type = (uint8_t)objects_e::DEAD_PLAYER;
-				if (_killer)
+				if (_killer && _killer->object != object)
 					_killer->add_score(player_score, player_score_min, player_score_max);
 				return true;
 

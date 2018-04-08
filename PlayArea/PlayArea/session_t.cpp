@@ -1,6 +1,5 @@
 #include "server_t.h"
 #include "server_action_e.h"
-#include "player_points_info_u.h"
 #include "session_t.h"
 
 void session_t::do_read()
@@ -15,25 +14,25 @@ void session_t::do_read()
         }
 
 				uint16_t position;
-        switch ((client_action_e)data[0])
-        {
-        case client_action_e::MOVE_UP:
-        case client_action_e::MOVE_DOWN:
-        case client_action_e::MOVE_RIGHT:
-        case client_action_e::MOVE_LEFT:
-        case client_action_e::ACT:
-            if (player)player->set_object_action((client_action_e)data[0]);
-						result[0] = (uint8_t)server_action_e::MESSAGE;
-						result[1] = 0;
-						do_write(2);
-            break;
+				switch ((client_action_e)data[0])
+				{
+				case client_action_e::MOVE_UP:
+				case client_action_e::MOVE_DOWN:
+				case client_action_e::MOVE_RIGHT:
+				case client_action_e::MOVE_LEFT:
+				case client_action_e::ACT:
+					if (player)player->set_object_action((client_action_e)data[0]);
+					result[0] = (uint8_t)server_action_e::MESSAGE;
+					result[1] = 0;
+					do_write(2);
+					break;
 
-        case client_action_e::CREDENTIALS:
-            player = server->get_player((char*)data + 1, (char*)data + 21);
-						result[0] = (uint8_t)server_action_e::MESSAGE;
-						result[1] = 0;
-						do_write(2);
-            break;
+				case client_action_e::CREDENTIALS:
+					player = server->get_player((char*)data + 1, (char*)data + 21);
+					result[0] = (uint8_t)server_action_e::MESSAGE;
+					result[1] = 0;
+					do_write(2);
+					break;
 
 				case client_action_e::GET_NAMES:
 					result[0] = (uint8_t)server_action_e::NAMES_LIST;
@@ -62,16 +61,21 @@ void session_t::do_read()
 					position = 2;
 					for (uint8_t i = 0; i < result[1]; i++)
 					{
-						player_points_info_u player_points_info;
-						player_points_info.value.player_index = i;
-						player_points_info.value.player_points = server->get_player_points(i);
-						for (uint8_t j = 0; j < 5; j++)
-							result[position + j] = player_points_info.data[j];
-						position += 5;
+						int32_t points = server->get_player_points(i);
+						result[position] = i;
+						position++;
+						result[position] = (points >> 24) & 0xff;
+						position++;
+						result[position] = (points >> 16) & 0xff;
+						position++;
+						result[position] = (points >> 8) & 0xff;
+						position++;
+						result[position] = points & 0xff;
+						position++;
 					}
 					do_write(position);
 					break;
-        }
+				}
     });
 }
 
