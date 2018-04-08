@@ -13,10 +13,6 @@ class client_t
 	bool is_recv_thread_running;
 	void recv_func();
 
-	void do_receive_size_x();
-	void do_receive_size_y();
-	void do_receive_map();
-
 	uint8_t size_x, size_y;
 	uint8_t *map_string;
 	uint32_t map_string_length = 0;

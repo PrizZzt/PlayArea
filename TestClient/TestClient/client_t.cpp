@@ -133,47 +133,6 @@ void client_t::run(const char *_host, const int _port, const char *_login, const
 	recv_thread = std::thread(&client_t::recv_func, this);
 }
 
-void client_t::do_receive_size_x()
-{
-	socket.async_read_some(boost::asio::buffer(&size_x, MAX_LENGTH), [this](boost::system::error_code _ec, std::size_t _length)
-	{
-		if (_ec)return;
-
-		do_receive_size_y();
-	});
-}
-
-void client_t::do_receive_size_y()
-{
-	socket.async_read_some(boost::asio::buffer(&size_y, 1), [this](boost::system::error_code _ec, std::size_t _length)
-	{
-		if (_ec)return;
-
-		uint32_t new_length;
-		new_length = size_x * size_y;
-		if (new_length != map_string_length)
-		{
-			if (map_string_length > 0)
-				delete[] map_string;
-
-			map_string_length = size_x * size_y;
-			map_string = new uint8_t[map_string_length];
-		}
-
-		do_receive_map();
-	});
-}
-
-void client_t::do_receive_map()
-{
-	socket.async_read_some(boost::asio::buffer(map_string, map_string_length), [this](boost::system::error_code _ec, std::size_t _length)
-	{
-		if (_ec)return;
-
-		do_receive_size_x();
-	});
-}
-
 void client_t::up()
 {
     char up = 1;
