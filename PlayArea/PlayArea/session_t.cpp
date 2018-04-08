@@ -22,15 +22,23 @@ void session_t::do_read()
 				case client_action_e::MOVE_LEFT:
 				case client_action_e::ACT:
 					if (player)player->set_object_action((client_action_e)data[0]);
-					result[0] = (uint8_t)server_action_e::MESSAGE;
+					result[0] = (uint8_t)server_action_e::MESSAGE_OK;
 					result[1] = 0;
 					do_write(2);
 					break;
 
 				case client_action_e::CREDENTIALS:
 					player = server->get_player((char*)data + 1, (char*)data + 21);
-					result[0] = (uint8_t)server_action_e::MESSAGE;
-					result[1] = 0;
+					if (player && player->object)
+					{
+						result[0] = (uint8_t)server_action_e::MESSAGE_OK;
+						result[1] = player->object->id;
+					}
+					else
+					{
+						result[0] = (uint8_t)server_action_e::MESSAGE_FAIL;
+						result[1] = 0;
+					}
 					do_write(2);
 					break;
 
@@ -99,7 +107,6 @@ session_t::session_t(boost::asio::ip::tcp::socket _socket, server_t *_server) :
     server(_server),
     player(nullptr)
 {
-    result[0] = (uint8_t)server_action_e::MESSAGE;
 }
 
 session_t::~session_t()

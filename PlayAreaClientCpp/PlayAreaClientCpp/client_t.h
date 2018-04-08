@@ -45,10 +45,11 @@ class client_t
 	}
 
 public:
+	uint8_t player_id;
 	client_t();
 	~client_t();
 
-	void connect(const char *_login, const char *_password);
+	void run(const char *_host, const int _port, const char *_login, const char *_password);
 
 	uint8_t    *get_map_string() { return map_string; }
 	uint32_t    get_map_string_length() { return map_string_length; }

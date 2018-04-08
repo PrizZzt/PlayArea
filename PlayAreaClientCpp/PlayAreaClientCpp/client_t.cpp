@@ -1,3 +1,5 @@
+#include <string>
+
 #include "player_points_info_u.h"
 #include "client_t.h"
 
@@ -44,11 +46,15 @@ void client_t::recv_func()
 			if (on_turn)on_turn();
 			break;
 
-		case 2://MESSAGE
+		case 2://MESSAGE_OK
 			if (boost::asio::read(socket, boost::asio::buffer(&result_code, 1)) == 0)continue;
 			break;
 
-		case 3://NAMES_LIST
+		case 3://MESSAGE_FAIL
+			if (boost::asio::read(socket, boost::asio::buffer(&result_code, 1)) == 0)continue;
+			break;
+
+		case 4://NAMES_LIST
 			if (boost::asio::read(socket, boost::asio::buffer(&new_players_count, 1)) == 0)continue;
 			check_players_count(new_players_count);
 			for (uint8_t i = 0; i < players_count; i++)
@@ -65,7 +71,7 @@ void client_t::recv_func()
 			}
 			break;
 
-		case 4://POINTS_LIST
+		case 5://POINTS_LIST
 			if (boost::asio::read(socket, boost::asio::buffer(&new_players_count, 1)) == 0)continue;
 			check_players_count(new_players_count);
 			for (uint8_t i = 0; i < players_count; i++)
@@ -106,18 +112,25 @@ client_t::~client_t()
     delete[] map_string;
 }
 
-void client_t::connect(const char *_login, const char *_password)
+void client_t::run(const char *_host, const int _port, const char *_login, const char *_password)
 {
-	boost::asio::connect(socket, resolver.resolve("127.0.0.1", "1234"));
-
-	is_recv_thread_running = true;
-	recv_thread = std::thread(&client_t::recv_func, this);
+	boost::asio::connect(socket, resolver.resolve(_host, std::to_string(_port)));
 
 	char request[MAX_LENGTH];
 	request[0] = 6;
 	for (int i = 0; i < strlen(_login) + 1; i++)request[i + 1] = _login[i];
 	for (int i = 0; i < strlen(_password) + 1; i++)request[i + 21] = _password[i];
 	boost::asio::write(socket, boost::asio::buffer(request, MAX_LENGTH));
+
+	uint8_t credentials_answer[2];
+	boost::asio::read(socket, boost::asio::buffer(credentials_answer, 1));
+	if (credentials_answer[0] == 2)
+		player_id = credentials_answer[1];
+	else
+		throw std::exception("Login was failed");
+
+	is_recv_thread_running = true;
+	recv_thread = std::thread(&client_t::recv_func, this);
 }
 
 void client_t::do_receive_size_x()
