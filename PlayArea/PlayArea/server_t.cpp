@@ -90,9 +90,9 @@ void server_t::do_accept()
 	});
 }
 
-server_t::server_t(game_logic_t *_game_logic, short _port) :
-	acceptor(io_context, boost::asio::ip::tcp::endpoint(boost::asio::ip::tcp::v4(), _port)),
-	map(_game_logic, 20, 20)
+server_t::server_t(game_logic_t *_game_logic, server_settings_s &_settings) :
+	acceptor(io_context, boost::asio::ip::tcp::endpoint(boost::asio::ip::tcp::v4(), _settings.port)),
+	map(_game_logic, _settings.map_settings)
 {
 	map_string_length = map.get_map_string_length();
 	map_string = new uint8_t[map_string_length];

@@ -171,6 +171,12 @@
     <ClInclude Include="client_action_e.h" />
     <ClInclude Include="server_t.h" />
     <ClInclude Include="session_t.h" />
+    <ClInclude Include="server_settings_s.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="settings.json">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

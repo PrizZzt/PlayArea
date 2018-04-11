@@ -6,6 +6,7 @@
 #include "server_action_e.h"
 #include "game_logic_t.h"
 #include "player_t.h"
+#include "server_settings_s.h"
 
 class map_t
 {
@@ -14,10 +15,10 @@ class map_t
 	uint8_t size_x, size_y;
 
 public:
-	map_t(game_logic_t *_game_logic, uint8_t _size_x, uint8_t _size_y)
+	map_t(game_logic_t *_game_logic, server_settings_s::map_settings_s &_settings)
 	{
-		size_x = _size_x;
-		size_y = _size_y;
+		size_x = _settings.size_x;
+		size_y = _settings.size_y;
 
 		field = new object_s**[size_y];
 		for (uint8_t j = 0; j < size_y; j++)
