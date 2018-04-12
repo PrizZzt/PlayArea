@@ -25,7 +25,11 @@ class PLAYAREAMONITOR_API UTGameInstance : public UGameInstance
 public:
 	FSocket *Socket;
 	TArray<ATObject*> objects;
-	uint8_t size_x, size_y;
+
+	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Size")
+		uint8 SizeX;
+	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Size")
+		uint8 SizeY;
 
 	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Objects")
 		TSubclassOf<ATObject> UndestructibleWall;
@@ -44,8 +48,11 @@ public:
 		TSubclassOf<UTPointsRow> PointsRow;
 	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "UI")
 		TSubclassOf<UTPointsTable> PointsTable;
+
 	UPROPERTY(/*BlueprintReadOnly, EditAnywhere, Category = "UI"*/)
 		UTPointsTable *PointsTableInstance;
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Ground")
+		AActor *Ground;
 
 	void Init()override;
 	void Shutdown()override;
@@ -57,9 +64,16 @@ public:
 
 	void SetSize(uint8_t _size_x, uint8_t _size_y)
 	{
-		size_x = _size_x;
-		size_y = _size_y;
+		if (SizeX != _size_x || SizeY != _size_y)
+		{
+			SizeX = _size_x;
+			SizeY = _size_y;
+
+			SetSize_BP();
+		}
 	}
+	UFUNCTION(BlueprintImplementableEvent)
+		void SetSize_BP();
 
 	void UpdateObject(uint8_t _id, uint8_t _type, uint8_t _x, uint8_t _y);
 	void UpdatePlayerName(uint8_t _id, FString &_name);

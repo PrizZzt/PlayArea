@@ -55,12 +55,12 @@ uint32 TReceiveWorker::Run()
 				}
 
 				game->SetSize(data[1], data[2]);
-				GEngine->AddOnScreenDebugMessage(-1, 1.0f, FColor::Yellow, "X = " + FString::FromInt(game->size_x));
-				GEngine->AddOnScreenDebugMessage(-1, 1.0f, FColor::Yellow, "Y = " + FString::FromInt(game->size_y));
+				GEngine->AddOnScreenDebugMessage(-1, 1.0f, FColor::Yellow, "X = " + FString::FromInt(game->SizeX));
+				GEngine->AddOnScreenDebugMessage(-1, 1.0f, FColor::Yellow, "Y = " + FString::FromInt(game->SizeY));
 				position = 3;
-				for (uint8_t j = 0; j < game->size_y; j++)
+				for (uint8_t j = 0; j < game->SizeY; j++)
 				{
-					for (uint8_t i = 0; i < game->size_x; i++)
+					for (uint8_t i = 0; i < game->SizeX; i++)
 					{
 						if (data[position] != 0)
 						{
