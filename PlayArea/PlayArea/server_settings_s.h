@@ -6,6 +6,7 @@
 struct server_settings_s
 {
 	short port;
+	uint32_t save_players_period;
 
 	struct map_settings_s
 	{
@@ -19,6 +20,7 @@ struct server_settings_s
 		boost::property_tree::read_json(_filename, tree);
 
 		port = tree.get<short>("server.port", 1234);
+		save_players_period = tree.get<uint32_t>("server.save_players_period", 60);
 		map_settings.size_x = tree.get<uint8_t>("server.map.size_x", 20);
 		map_settings.size_y = tree.get<uint8_t>("server.map.size_y", 20);
 	}
@@ -28,6 +30,7 @@ struct server_settings_s
 		boost::property_tree::ptree tree;
 
 		tree.put("server.port", port);
+		tree.put("server.save_players_period", save_players_period);
 		tree.put("server.map.size_x", map_settings.size_x);
 		tree.put("server.map.size_y", map_settings.size_y);
 

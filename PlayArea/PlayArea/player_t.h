@@ -3,6 +3,7 @@
 #include <cstdint>
 
 #include "object_s.h"
+#include "player_list_s.h"
 
 class map_t;
 
@@ -13,10 +14,13 @@ class player_t
 	char    password[20]; // Пароль игрока
 	int32_t points;        // Очки игрока
 
+	player_t(const char *_login, const  char *_password);
+
 public:
 	object_s *object; // Соответствующий игроку объект на карте, всегда есть
 
-	player_t(char *_login, char *_password, object_s *_object);
+	player_t(const char *_login, const  char *_password, object_s *_object);
+	player_t(const char *_login, const  char *_password, int32_t _points);
 	~player_t();
 
 	char *get_player_name() { return login; }
@@ -36,4 +40,11 @@ public:
 	}
 
 	bool check_credentials(char *_login, char *_password);
+
+	void fill_player_info(player_list_s::player_info_s &_player_info)
+	{
+		_player_info.login = login;
+		_player_info.password = password;
+		_player_info.points = points;
+	}
 };

@@ -163,6 +163,7 @@
   <ItemGroup>
     <ClInclude Include="bomberman_logic_t.h" />
     <ClInclude Include="game_logic_t.h" />
+    <ClInclude Include="player_list_s.h" />
     <ClInclude Include="server_action_e.h" />
     <ClInclude Include="contstants.h" />
     <ClInclude Include="map_t.h" />

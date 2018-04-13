@@ -4,6 +4,7 @@
 
 #include "server_t.h"
 #include "bomberman_logic_t.h"
+#include "player_list_s.h"
 
 void server_t::update_func()
 {
@@ -18,6 +19,25 @@ void server_t::update_func()
 		{
 			session->send_map(map_string, map_string_length);
 		}
+
+		// Проверяем, не подошло ли время сохранения всех игроков в файл
+		if (ticks_to_save_players <= 1)
+		{
+			ticks_to_save_players = save_players_period;
+			if (players_count > 0)
+			{
+				player_list_s player_list;
+				player_list_s::player_info_s player_info;
+				for (uint8_t i = 0; i < players_count; i++)
+				{
+					players[i]->fill_player_info(player_info);
+					player_list.player_infos.push_back(player_info);
+				}
+				player_list.save("player_list.json");
+			}
+		}
+		else
+			ticks_to_save_players--;
 
 #pragma region TO DELETE
 		HANDLE output_handle = GetStdHandle(STD_OUTPUT_HANDLE);
@@ -90,7 +110,7 @@ void server_t::do_accept()
 	});
 }
 
-server_t::server_t(game_logic_t *_game_logic, server_settings_s &_settings) :
+server_t::server_t(game_logic_t *_game_logic, server_settings_s &_settings, player_list_s &_player_list) :
 	acceptor(io_context, boost::asio::ip::tcp::endpoint(boost::asio::ip::tcp::v4(), _settings.port)),
 	map(_game_logic, _settings.map_settings)
 {
@@ -98,6 +118,14 @@ server_t::server_t(game_logic_t *_game_logic, server_settings_s &_settings) :
 	map_string = new uint8_t[map_string_length];
 
 	players_count = 0;
+	for (auto &player_info : _player_list.player_infos)
+	{
+		players[players_count] = new player_t(player_info.login.c_str(), player_info.password.c_str(), player_info.points);
+		players_count++;
+	}
+
+	ticks_to_save_players = _settings.save_players_period;
+	save_players_period = _settings.save_players_period;
 
 	is_update_thread_running = true;
 	update_thread = std::thread(&server_t::update_func, this);

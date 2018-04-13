@@ -20,6 +20,8 @@ class server_t
 		player_t *players[MAX_PLAYERS_COUNT];
     uint8_t  players_count;
     std::list<std::shared_ptr<session_t>> sessions;
+		uint32_t ticks_to_save_players;// Тиков до сохранения игроков в файл осталось
+		uint32_t save_players_period;// Тиков до сохранения игроков в файл
 
     std::thread update_thread;
     bool is_update_thread_running;
@@ -28,7 +30,7 @@ class server_t
     void do_accept();
 
 public:
-    server_t(game_logic_t *_game_logic, server_settings_s &_settings);
+    server_t(game_logic_t *_game_logic, server_settings_s &_settings, player_list_s &_player_list);
     ~server_t();
 
     uint8_t  *get_map_string() { return map_string; }

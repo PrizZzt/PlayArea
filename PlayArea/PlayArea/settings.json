@@ -1,9 +1,10 @@
 {
-    "server": {
-        "port": "1234",
-        "map": {
-            "size_x": "20",
-            "size_y": "20"
-        }
-    }
+	"server": {
+		"port": "1234",
+		"save_players_period": 60,
+		"map": {
+			"size_x": "20",
+			"size_y": "20"
+		}
+	}
 }
