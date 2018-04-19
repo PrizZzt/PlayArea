@@ -18,10 +18,19 @@ class PLAYAREAMONITOR_API ATPlayerController : public APlayerController
 
 public:
 	UUserWidget *PointsTable;
+	bool ManualControl;
+
 	ATPlayerController();
 
 	void BeginPlay()override;
 
 	void ShowTable();
 	void HideTable();
+	void StartLooking();
+	void StopLooking();
+
+	void MouseLookX(float _scale);
+	void MouseLookY(float _scale);
+	void MoveForward(float _scale);
+	void MoveRight(float _scale);
 };

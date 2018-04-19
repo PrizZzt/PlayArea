@@ -5,5 +5,4 @@
 
 ATGameMode::ATGameMode()
 {
-	PlayerControllerClass = ATPlayerController::StaticClass();
 }
