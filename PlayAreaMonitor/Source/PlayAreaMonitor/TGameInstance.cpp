@@ -175,3 +175,18 @@ void UTGameInstance::CheckAdditionalInfo()
 	}
 	Socket->Send(&data, 1, sent);
 }
+
+int UTGameInstance::GetNextPlayerIndex(int startIndex)
+{
+	for (int i = startIndex + 1; i < objects.Num(); i++)
+	{
+		if (ATObject::GetGroup(objects[i]->Type) == ATObject::PLAYER_GROUP)
+			return i;
+	}
+	for (int i = 0; i < objects.Num(); i++)
+	{
+		if (ATObject::GetGroup(objects[i]->Type) == ATObject::PLAYER_GROUP)
+			return i;
+	}
+	return -1;
+}

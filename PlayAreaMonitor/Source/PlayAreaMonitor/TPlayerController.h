@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "GameFramework/PlayerController.h"
 #include "TGameInstance.h"
+#include "ELookType.h"
 #include "TPlayerController.generated.h"
 
 /**
@@ -18,7 +19,10 @@ class PLAYAREAMONITOR_API ATPlayerController : public APlayerController
 
 public:
 	UUserWidget *PointsTable;
+
+	ELookType LookType;
 	bool ManualControl;
+	int indexOfPlayerToAttach;
 
 	ATPlayerController();
 
@@ -33,4 +37,8 @@ public:
 	void MouseLookY(float _scale);
 	void MoveForward(float _scale);
 	void MoveRight(float _scale);
+
+	void SetStaticLook();
+	void SetManualLook();
+	void SetPlayerLook();
 };

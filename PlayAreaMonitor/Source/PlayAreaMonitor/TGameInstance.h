@@ -78,4 +78,6 @@ public:
 	void UpdateObject(uint8_t _id, uint8_t _type, uint8_t _x, uint8_t _y);
 	void UpdatePlayerName(uint8_t _id, FString &_name);
 	void CheckAdditionalInfo();
+
+	int GetNextPlayerIndex(int startIndex);
 };
