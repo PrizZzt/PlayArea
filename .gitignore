@@ -7,8 +7,7 @@
 /PlayAreaClientCpp/PlayAreaClientCpp/x64/Debug
 /PlayAreaClientCpp/PlayAreaClientCpp/x64/Release
 /PlayAreaClientCpp/x64
-/PlayArea/PlayArea/x64/Debug
-/PlayArea/PlayArea/x64/Release
+/PlayArea/PlayArea/x64
 /PlayArea/.vs/PlayArea/v15
 /PlayArea/x64
 /PlayAreaMonitor/Binaries
@@ -31,3 +30,5 @@
 /TestClient/x64
 /PlayArea/.vs/config
 /PlayArea/PlayArea/player_list.json
+/PlayArea/Bomberman/x64
+/PlayArea/Bomberman/Bomberman.vcxproj.user

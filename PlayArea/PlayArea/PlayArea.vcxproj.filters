@@ -56,13 +56,13 @@
     <ClInclude Include="game_logic_t.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
-    <ClInclude Include="bomberman_logic_t.h">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
     <ClInclude Include="server_settings_s.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
     <ClInclude Include="player_list_s.h">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
+    <ClInclude Include="map_settings_s.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
   </ItemGroup>

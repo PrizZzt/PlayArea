@@ -1,5 +1,7 @@
 #pragma once
 
+#include <cstdint>
+
 class map_t;
 class player_t;
 struct object_s;

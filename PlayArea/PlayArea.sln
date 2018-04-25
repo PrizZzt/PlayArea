@@ -5,6 +5,10 @@ VisualStudioVersion = 15.0.27130.2026
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "PlayArea", "PlayArea\PlayArea.vcxproj", "{66DCBD45-4F77-48AA-BCFD-640E19CA18F8}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "GameLogic", "GameLogic", "{9E7BAF78-CC66-43D1-9982-82ADEE571406}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Bomberman", "Bomberman\Bomberman.vcxproj", "{2FCC33A7-66E2-4C28-ABC3-7F4AF3F89B04}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -21,9 +25,20 @@ Global
 		{66DCBD45-4F77-48AA-BCFD-640E19CA18F8}.Release|x64.Build.0 = Release|x64
 		{66DCBD45-4F77-48AA-BCFD-640E19CA18F8}.Release|x86.ActiveCfg = Release|Win32
 		{66DCBD45-4F77-48AA-BCFD-640E19CA18F8}.Release|x86.Build.0 = Release|Win32
+		{2FCC33A7-66E2-4C28-ABC3-7F4AF3F89B04}.Debug|x64.ActiveCfg = Debug|x64
+		{2FCC33A7-66E2-4C28-ABC3-7F4AF3F89B04}.Debug|x64.Build.0 = Debug|x64
+		{2FCC33A7-66E2-4C28-ABC3-7F4AF3F89B04}.Debug|x86.ActiveCfg = Debug|Win32
+		{2FCC33A7-66E2-4C28-ABC3-7F4AF3F89B04}.Debug|x86.Build.0 = Debug|Win32
+		{2FCC33A7-66E2-4C28-ABC3-7F4AF3F89B04}.Release|x64.ActiveCfg = Release|x64
+		{2FCC33A7-66E2-4C28-ABC3-7F4AF3F89B04}.Release|x64.Build.0 = Release|x64
+		{2FCC33A7-66E2-4C28-ABC3-7F4AF3F89B04}.Release|x86.ActiveCfg = Release|Win32
+		{2FCC33A7-66E2-4C28-ABC3-7F4AF3F89B04}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{2FCC33A7-66E2-4C28-ABC3-7F4AF3F89B04} = {9E7BAF78-CC66-43D1-9982-82ADEE571406}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {8D3498FD-038F-41A7-BFCA-1A9A6E1EFB83}

@@ -1,121 +1,52 @@
 #pragma once
 
-#include "game_logic_t.h"
+#include "../PlayArea/game_logic_t.h"
 
-#include <boost/property_tree/ptree.hpp>
-#include <boost/property_tree/json_parser.hpp>
-#include <boost/filesystem.hpp>
-
-struct bomberman_settings_s
-{
-	int32_t wall_score = 10;
-	int32_t meatchopper_score = 100;
-	int32_t player_score = 1000;
-	int32_t player_dead_penalty = 1;
-	int32_t player_score_min = -10;
-	int32_t player_score_max = INT32_MAX - 1;
-
-	void load(const std::string &_filename)
-	{
-		if (boost::filesystem::exists(_filename))
-		{
-			boost::property_tree::ptree tree;
-			boost::property_tree::read_json(_filename, tree);
-
-			wall_score = tree.get<int32_t>("bomberman.wall_score", wall_score);
-			meatchopper_score = tree.get<int32_t>("bomberman.meatchopper_score", meatchopper_score);
-			player_score = tree.get<int32_t>("bomberman.player_score", player_score);
-			player_dead_penalty = tree.get<int32_t>("bomberman.player_dead_penalty", player_dead_penalty);
-			player_score_min = tree.get<int32_t>("bomberman.player_score_min", player_score_min);
-			player_score_max = tree.get<int32_t>("bomberman.player_score_max", player_score_max);
-		}
-	}
-
-	void save(const std::string &_filename)
-	{
-		boost::property_tree::ptree tree;
-
-		tree.put("bomberman.wall_score", wall_score);
-		tree.put("bomberman.meatchopper_score", meatchopper_score);
-		tree.put("bomberman.player_score", player_score);
-		tree.put("bomberman.player_dead_penalty", player_dead_penalty);
-		tree.put("bomberman.player_score_min", player_score_min);
-		tree.put("bomberman.player_score_max", player_score_max);
-
-		boost::property_tree::write_json(_filename, tree);
-	}
-};
+#include "bomberman_settings_s.h"
+#include "bomberman_objects_e.h"
 
 class bomberman_logic_t : public game_logic_t
 {
 	bomberman_settings_s settings;
 
-public:
-	enum class objects_e : uint8_t
-	{
-		NONE,
-
-		UNDESTRUCTIBLE_WALL,
-		DESTRUCTIBLE_WALL,
-		DESTROYED_WALL,
-
-		PLAYER,
-		PLAYER_WITH_BOMB_1,
-		PLAYER_WITH_BOMB_2,
-		PLAYER_WITH_BOMB_3,
-		PLAYER_WITH_BOMB_4,
-		PLAYER_WITH_BOMB_5,
-		DEAD_PLAYER,
-
-		MEATCHOPPER,
-		DEAD_MEATCHOPPER,
-
-		BOOM,
-		BOMB_1,
-		BOMB_2,
-		BOMB_3,
-		BOMB_4,
-		BOMB_5
-	};
-
 	uint8_t get_bomb_state(uint8_t _player_state)
 	{
-		switch ((objects_e)_player_state)
+		switch ((bomberman_objects_e)_player_state)
 		{
-		case objects_e::PLAYER_WITH_BOMB_5:return (uint8_t)objects_e::BOMB_5;
-		case objects_e::PLAYER_WITH_BOMB_4:return (uint8_t)objects_e::BOMB_4;
-		case objects_e::PLAYER_WITH_BOMB_3:return (uint8_t)objects_e::BOMB_3;
-		case objects_e::PLAYER_WITH_BOMB_2:return (uint8_t)objects_e::BOMB_2;
-		case objects_e::PLAYER_WITH_BOMB_1:return (uint8_t)objects_e::BOMB_1;
+		case bomberman_objects_e::PLAYER_WITH_BOMB_5:return (uint8_t)bomberman_objects_e::BOMB_5;
+		case bomberman_objects_e::PLAYER_WITH_BOMB_4:return (uint8_t)bomberman_objects_e::BOMB_4;
+		case bomberman_objects_e::PLAYER_WITH_BOMB_3:return (uint8_t)bomberman_objects_e::BOMB_3;
+		case bomberman_objects_e::PLAYER_WITH_BOMB_2:return (uint8_t)bomberman_objects_e::BOMB_2;
+		case bomberman_objects_e::PLAYER_WITH_BOMB_1:return (uint8_t)bomberman_objects_e::BOMB_1;
 		default: throw std::exception("Wrong usage of get_bomb_state"); break;
 		}
 	}
 
 	uint8_t next_bomb_state(uint8_t _object_state)
 	{
-		switch ((objects_e)_object_state)
+		switch ((bomberman_objects_e)_object_state)
 		{
-		case objects_e::PLAYER_WITH_BOMB_5:
-			return (uint8_t)objects_e::PLAYER_WITH_BOMB_4;
-		case objects_e::PLAYER_WITH_BOMB_4:
-			return (uint8_t)objects_e::PLAYER_WITH_BOMB_3;
-		case objects_e::PLAYER_WITH_BOMB_3:
-			return (uint8_t)objects_e::PLAYER_WITH_BOMB_2;
-		case objects_e::PLAYER_WITH_BOMB_2:
-			return (uint8_t)objects_e::PLAYER_WITH_BOMB_1;
+		case bomberman_objects_e::PLAYER_WITH_BOMB_5:
+			return (uint8_t)bomberman_objects_e::PLAYER_WITH_BOMB_4;
+		case bomberman_objects_e::PLAYER_WITH_BOMB_4:
+			return (uint8_t)bomberman_objects_e::PLAYER_WITH_BOMB_3;
+		case bomberman_objects_e::PLAYER_WITH_BOMB_3:
+			return (uint8_t)bomberman_objects_e::PLAYER_WITH_BOMB_2;
+		case bomberman_objects_e::PLAYER_WITH_BOMB_2:
+			return (uint8_t)bomberman_objects_e::PLAYER_WITH_BOMB_1;
 
-		case objects_e::PLAYER_WITH_BOMB_1:
-		case objects_e::BOMB_1:
-			return (uint8_t)objects_e::BOOM;
+		case bomberman_objects_e::PLAYER_WITH_BOMB_1:
+		case bomberman_objects_e::BOMB_1:
+			return (uint8_t)bomberman_objects_e::BOOM;
 
-		case objects_e::BOMB_5:
-			return (uint8_t)objects_e::BOMB_4;
-		case objects_e::BOMB_4:
-			return (uint8_t)objects_e::BOMB_3;
-		case objects_e::BOMB_3:
-			return (uint8_t)objects_e::BOMB_2;
-		case objects_e::BOMB_2:
-			return (uint8_t)objects_e::BOMB_1;
+		case bomberman_objects_e::BOMB_5:
+			return (uint8_t)bomberman_objects_e::BOMB_4;
+		case bomberman_objects_e::BOMB_4:
+			return (uint8_t)bomberman_objects_e::BOMB_3;
+		case bomberman_objects_e::BOMB_3:
+			return (uint8_t)bomberman_objects_e::BOMB_2;
+		case bomberman_objects_e::BOMB_2:
+			return (uint8_t)bomberman_objects_e::BOMB_1;
 
 		default: return 0;
 		}
@@ -126,24 +57,24 @@ public:
 		if (_object == nullptr)
 			return 0;
 
-		switch ((objects_e)_object->type)
+		switch ((bomberman_objects_e)_object->type)
 		{
-		case objects_e::BOMB_1:              return -10;
-		case objects_e::BOMB_2:              return -8;
-		case objects_e::BOMB_3:              return -6;
-		case objects_e::BOMB_4:              return -4;
-		case objects_e::BOMB_5:              return -2;
-		case objects_e::PLAYER_WITH_BOMB_1:  return 1;
-		case objects_e::PLAYER_WITH_BOMB_2:  return 2;
-		case objects_e::PLAYER_WITH_BOMB_3:  return 4;
-		case objects_e::PLAYER_WITH_BOMB_4:  return 6;
-		case objects_e::PLAYER_WITH_BOMB_5:  return 8;
-		case objects_e::PLAYER:              return 10;
+		case bomberman_objects_e::BOMB_1:              return -10;
+		case bomberman_objects_e::BOMB_2:              return -8;
+		case bomberman_objects_e::BOMB_3:              return -6;
+		case bomberman_objects_e::BOMB_4:              return -4;
+		case bomberman_objects_e::BOMB_5:              return -2;
+		case bomberman_objects_e::PLAYER_WITH_BOMB_1:  return 1;
+		case bomberman_objects_e::PLAYER_WITH_BOMB_2:  return 2;
+		case bomberman_objects_e::PLAYER_WITH_BOMB_3:  return 4;
+		case bomberman_objects_e::PLAYER_WITH_BOMB_4:  return 6;
+		case bomberman_objects_e::PLAYER_WITH_BOMB_5:  return 8;
+		case bomberman_objects_e::PLAYER:              return 10;
 
-		case objects_e::DESTRUCTIBLE_WALL:
-		case objects_e::UNDESTRUCTIBLE_WALL: return -1;
+		case bomberman_objects_e::DESTRUCTIBLE_WALL:
+		case bomberman_objects_e::UNDESTRUCTIBLE_WALL: return -1;
 
-		default:                             return 0;
+		default:                                       return 0;
 		}
 	}
 
@@ -153,51 +84,51 @@ public:
 		object_s *object = _map->get_object(_x, _y);
 		if (object)
 		{
-			switch ((objects_e)object->type)
+			switch ((bomberman_objects_e)object->type)
 			{
-			case objects_e::PLAYER:
-			case objects_e::PLAYER_WITH_BOMB_1:
-			case objects_e::PLAYER_WITH_BOMB_2:
-			case objects_e::PLAYER_WITH_BOMB_3:
-			case objects_e::PLAYER_WITH_BOMB_4:
-			case objects_e::PLAYER_WITH_BOMB_5:
+			case bomberman_objects_e::PLAYER:
+			case bomberman_objects_e::PLAYER_WITH_BOMB_1:
+			case bomberman_objects_e::PLAYER_WITH_BOMB_2:
+			case bomberman_objects_e::PLAYER_WITH_BOMB_3:
+			case bomberman_objects_e::PLAYER_WITH_BOMB_4:
+			case bomberman_objects_e::PLAYER_WITH_BOMB_5:
 				if (object->player)
 					object->player->add_score(-settings.player_dead_penalty, settings.player_score_min, settings.player_score_max);
-			case objects_e::DEAD_PLAYER:
-				object->type = (uint8_t)objects_e::DEAD_PLAYER;
+			case bomberman_objects_e::DEAD_PLAYER:
+				object->type = (uint8_t)bomberman_objects_e::DEAD_PLAYER;
 				if (_killer && _killer->object != object)
 					_killer->add_score(settings.player_score, settings.player_score_min, settings.player_score_max);
 				return true;
 
-			case objects_e::MEATCHOPPER:
-			case objects_e::DEAD_MEATCHOPPER:
-				object->type = (uint8_t)objects_e::DEAD_MEATCHOPPER;
+			case bomberman_objects_e::MEATCHOPPER:
+			case bomberman_objects_e::DEAD_MEATCHOPPER:
+				object->type = (uint8_t)bomberman_objects_e::DEAD_MEATCHOPPER;
 				if (_killer)
 					_killer->add_score(settings.meatchopper_score, settings.player_score_min, settings.player_score_max);
 				return true;
 
-			case objects_e::BOMB_1:
-			case objects_e::BOMB_2:
-			case objects_e::BOMB_3:
-			case objects_e::BOMB_4:
-			case objects_e::BOMB_5:
-				object->type = (uint8_t)objects_e::BOOM;
+			case bomberman_objects_e::BOMB_1:
+			case bomberman_objects_e::BOMB_2:
+			case bomberman_objects_e::BOMB_3:
+			case bomberman_objects_e::BOMB_4:
+			case bomberman_objects_e::BOMB_5:
+				object->type = (uint8_t)bomberman_objects_e::BOOM;
 				object->to_delete = true;
 				return true;
 
-			case objects_e::DESTRUCTIBLE_WALL:
-			case objects_e::DESTROYED_WALL:
-				object->type = (uint8_t)objects_e::DESTROYED_WALL;
+			case bomberman_objects_e::DESTRUCTIBLE_WALL:
+			case bomberman_objects_e::DESTROYED_WALL:
+				object->type = (uint8_t)bomberman_objects_e::DESTROYED_WALL;
 				if (_killer)
 					_killer->add_score(settings.wall_score, settings.player_score_min, settings.player_score_max);
 				return true;
 
-			case objects_e::UNDESTRUCTIBLE_WALL:
+			case bomberman_objects_e::UNDESTRUCTIBLE_WALL:
 				return true;
 			}
 		}
 		else
-			_map->set_object(new object_s(0, objects_e::BOOM, true), _x, _y);
+			_map->set_object(new object_s(0, bomberman_objects_e::BOOM, true), _x, _y);
 		return false;
 	}
 
@@ -220,15 +151,15 @@ public:
 			else
 			{
 				if (
-					target->type == (uint8_t)objects_e::PLAYER ||
-					target->type == (uint8_t)objects_e::PLAYER_WITH_BOMB_1 ||
-					target->type == (uint8_t)objects_e::PLAYER_WITH_BOMB_2 ||
-					target->type == (uint8_t)objects_e::PLAYER_WITH_BOMB_3 ||
-					target->type == (uint8_t)objects_e::PLAYER_WITH_BOMB_4 ||
-					target->type == (uint8_t)objects_e::PLAYER_WITH_BOMB_5
+					target->type == (uint8_t)bomberman_objects_e::PLAYER ||
+					target->type == (uint8_t)bomberman_objects_e::PLAYER_WITH_BOMB_1 ||
+					target->type == (uint8_t)bomberman_objects_e::PLAYER_WITH_BOMB_2 ||
+					target->type == (uint8_t)bomberman_objects_e::PLAYER_WITH_BOMB_3 ||
+					target->type == (uint8_t)bomberman_objects_e::PLAYER_WITH_BOMB_4 ||
+					target->type == (uint8_t)bomberman_objects_e::PLAYER_WITH_BOMB_5
 					)
 				{
-					target->type = (uint8_t)objects_e::DEAD_PLAYER;
+					target->type = (uint8_t)bomberman_objects_e::DEAD_PLAYER;
 					if (target->player)
 						target->player->add_score(-settings.player_dead_penalty, settings.player_score_min, settings.player_score_max);
 					return;
@@ -263,12 +194,12 @@ public:
 		{
 			_map->set_object(object, _x + _shift_x, _y + _shift_y);
 
-			if (object->type == (uint8_t)objects_e::PLAYER)
+			if (object->type == (uint8_t)bomberman_objects_e::PLAYER)
 				_map->set_object(nullptr, _x, _y);
 			else
 			{
 				_map->set_object(new object_s(0, get_bomb_state(object->type), object->player), _x, _y);
-				object->type = (uint8_t)objects_e::PLAYER;
+				object->type = (uint8_t)bomberman_objects_e::PLAYER;
 			}
 			return;
 		}
@@ -285,12 +216,12 @@ public:
 			for (uint8_t i = 0; i < _map->get_size_x(); i++)
 			{
 				if (i % 2 == 1 && j % 2 == 1)
-					_map->set_object(new object_s(0, objects_e::UNDESTRUCTIBLE_WALL, false), i, j);
+					_map->set_object(new object_s(0, bomberman_objects_e::UNDESTRUCTIBLE_WALL, false), i, j);
 			}
 		}
 		for (uint8_t i = 0; i < 40; i++)
 		{
-			object_s *wall = new object_s(i, objects_e::DESTRUCTIBLE_WALL, false);
+			object_s *wall = new object_s(i, bomberman_objects_e::DESTRUCTIBLE_WALL, false);
 			if (_map->place_object_in_random_location(wall) == false)
 			{
 				delete wall;
@@ -299,7 +230,7 @@ public:
 		}
 		for (uint8_t i = 0; i < 4; i++)
 		{
-			object_s *meatchopper = new object_s(i, objects_e::MEATCHOPPER, false);
+			object_s *meatchopper = new object_s(i, bomberman_objects_e::MEATCHOPPER, false);
 			if (_map->place_object_in_random_location(meatchopper) == false)
 			{
 				delete meatchopper;
@@ -326,14 +257,14 @@ public:
 					}
 					else
 					{
-						switch ((objects_e)object->type)
+						switch ((bomberman_objects_e)object->type)
 						{
-						case objects_e::PLAYER:
-						case objects_e::PLAYER_WITH_BOMB_1:
-						case objects_e::PLAYER_WITH_BOMB_2:
-						case objects_e::PLAYER_WITH_BOMB_3:
-						case objects_e::PLAYER_WITH_BOMB_4:
-						case objects_e::PLAYER_WITH_BOMB_5:
+						case bomberman_objects_e::PLAYER:
+						case bomberman_objects_e::PLAYER_WITH_BOMB_1:
+						case bomberman_objects_e::PLAYER_WITH_BOMB_2:
+						case bomberman_objects_e::PLAYER_WITH_BOMB_3:
+						case bomberman_objects_e::PLAYER_WITH_BOMB_4:
+						case bomberman_objects_e::PLAYER_WITH_BOMB_5:
 							switch (object->next_action)
 							{
 							case client_action_e::MOVE_UP:
@@ -353,30 +284,30 @@ public:
 								break;
 
 							case client_action_e::ACT:
-								if ((objects_e)object->type == bomberman_logic_t::objects_e::PLAYER)
-									object->type = (uint8_t)objects_e::PLAYER_WITH_BOMB_5;
+								if ((bomberman_objects_e)object->type == bomberman_objects_e::PLAYER)
+									object->type = (uint8_t)bomberman_objects_e::PLAYER_WITH_BOMB_5;
 								break;
 							}
 							break;
 
-						case objects_e::DEAD_PLAYER:
-							object->type = (uint8_t)objects_e::PLAYER;
+						case bomberman_objects_e::DEAD_PLAYER:
+							object->type = (uint8_t)bomberman_objects_e::PLAYER;
 
 							if (_map->place_object_in_random_location(object))
 								_map->set_object(nullptr, i, j);
 
 							break;
 
-						case objects_e::DEAD_MEATCHOPPER:
-							object->type = (uint8_t)objects_e::MEATCHOPPER;
+						case bomberman_objects_e::DEAD_MEATCHOPPER:
+							object->type = (uint8_t)bomberman_objects_e::MEATCHOPPER;
 
 							if (_map->place_object_in_random_location(object))
 								_map->set_object(nullptr, i, j);
 
 							break;
 
-						case objects_e::DESTROYED_WALL:
-							object->type = (uint8_t)objects_e::DESTRUCTIBLE_WALL;
+						case bomberman_objects_e::DESTROYED_WALL:
+							object->type = (uint8_t)bomberman_objects_e::DESTRUCTIBLE_WALL;
 
 							if (_map->place_object_in_random_location(object))
 								_map->set_object(nullptr, i, j);
@@ -394,7 +325,7 @@ public:
 		{
 			for (uint8_t i = 0; i < _map->get_size_x(); i++)
 			{
-				if ((object = _map->get_object(i, j)) && object->type == (uint8_t)objects_e::MEATCHOPPER && object->next_action == client_action_e::NONE)
+				if ((object = _map->get_object(i, j)) && object->type == (uint8_t)bomberman_objects_e::MEATCHOPPER && object->next_action == client_action_e::NONE)
 				{
 					// Определяем максимальную дальность, на которую надо делать проверку
 					uint8_t range = i;
@@ -482,17 +413,17 @@ public:
 					uint8_t next_state = next_bomb_state(object->type);
 					if (next_state != 0)
 					{
-						if (next_state == (uint8_t)objects_e::BOOM)
+						if (next_state == (uint8_t)bomberman_objects_e::BOOM)
 						{
-							if (object->type == (uint8_t)objects_e::PLAYER_WITH_BOMB_1)
+							if (object->type == (uint8_t)bomberman_objects_e::PLAYER_WITH_BOMB_1)
 							{
-								object->type = (uint8_t)objects_e::DEAD_PLAYER;
+								object->type = (uint8_t)bomberman_objects_e::DEAD_PLAYER;
 								if (object->player)
 									object->player->add_score(-settings.player_dead_penalty, settings.player_score_min, settings.player_score_max);
 							}
 							else
 							{
-								object->type = (uint8_t)objects_e::BOOM;
+								object->type = (uint8_t)bomberman_objects_e::BOOM;
 								object->to_delete = true;
 							}
 							for (uint8_t k = 1; k < 4; k++)
@@ -534,6 +465,6 @@ public:
 
 	object_s *create_player_object(uint8_t _id, player_t *_player)override
 	{
-		return new object_s(_id, objects_e::PLAYER, _player);
+		return new object_s(_id, bomberman_objects_e::PLAYER, _player);
 	}
 };

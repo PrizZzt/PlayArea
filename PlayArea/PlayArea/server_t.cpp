@@ -3,7 +3,9 @@
 #include <ctime>
 
 #include "server_t.h"
-#include "bomberman_logic_t.h"
+#pragma region TO DELETE
+#include "../Bomberman/bomberman_objects_e.h"
+#pragma endregion
 #include "player_list_s.h"
 
 void server_t::update_func()
@@ -61,29 +63,29 @@ void server_t::update_func()
 
 		for (uint32_t i = 3; i < map.get_map_string_length(); i += 2)
 		{
-			switch ((bomberman_logic_t::objects_e)map_string[i])
+			switch ((bomberman_objects_e)map_string[i])
 			{
-			case bomberman_logic_t::objects_e::NONE: std::cout << ' '; break;
-			case bomberman_logic_t::objects_e::UNDESTRUCTIBLE_WALL:
-			case bomberman_logic_t::objects_e::DESTRUCTIBLE_WALL: std::cout << '#'; break;
-			case bomberman_logic_t::objects_e::DESTROYED_WALL: std::cout << '%'; break;
-			case bomberman_logic_t::objects_e::PLAYER: std::cout << 'P'; break;
-			case bomberman_logic_t::objects_e::PLAYER_WITH_BOMB_1: std::cout << '1'; break;
-			case bomberman_logic_t::objects_e::PLAYER_WITH_BOMB_2: std::cout << '2'; break;
-			case bomberman_logic_t::objects_e::PLAYER_WITH_BOMB_3: std::cout << '3'; break;
-			case bomberman_logic_t::objects_e::PLAYER_WITH_BOMB_4: std::cout << '4'; break;
-			case bomberman_logic_t::objects_e::PLAYER_WITH_BOMB_5: std::cout << '5'; break;
-			case bomberman_logic_t::objects_e::DEAD_PLAYER: std::cout << 'X'; break;
+			case bomberman_objects_e::NONE: std::cout << ' '; break;
+			case bomberman_objects_e::UNDESTRUCTIBLE_WALL:
+			case bomberman_objects_e::DESTRUCTIBLE_WALL: std::cout << '#'; break;
+			case bomberman_objects_e::DESTROYED_WALL: std::cout << '%'; break;
+			case bomberman_objects_e::PLAYER: std::cout << 'P'; break;
+			case bomberman_objects_e::PLAYER_WITH_BOMB_1: std::cout << '1'; break;
+			case bomberman_objects_e::PLAYER_WITH_BOMB_2: std::cout << '2'; break;
+			case bomberman_objects_e::PLAYER_WITH_BOMB_3: std::cout << '3'; break;
+			case bomberman_objects_e::PLAYER_WITH_BOMB_4: std::cout << '4'; break;
+			case bomberman_objects_e::PLAYER_WITH_BOMB_5: std::cout << '5'; break;
+			case bomberman_objects_e::DEAD_PLAYER: std::cout << 'X'; break;
 
-			case bomberman_logic_t::objects_e::MEATCHOPPER: std::cout << 'M'; break;
-			case bomberman_logic_t::objects_e::DEAD_MEATCHOPPER: std::cout << 'W'; break;
+			case bomberman_objects_e::MEATCHOPPER: std::cout << 'M'; break;
+			case bomberman_objects_e::DEAD_MEATCHOPPER: std::cout << 'W'; break;
 
-			case bomberman_logic_t::objects_e::BOOM: std::cout << '*'; break;
-			case bomberman_logic_t::objects_e::BOMB_1: std::cout << '1'; break;
-			case bomberman_logic_t::objects_e::BOMB_2: std::cout << '2'; break;
-			case bomberman_logic_t::objects_e::BOMB_3: std::cout << '3'; break;
-			case bomberman_logic_t::objects_e::BOMB_4: std::cout << '4'; break;
-			case bomberman_logic_t::objects_e::BOMB_5: std::cout << '5'; break;
+			case bomberman_objects_e::BOOM: std::cout << '*'; break;
+			case bomberman_objects_e::BOMB_1: std::cout << '1'; break;
+			case bomberman_objects_e::BOMB_2: std::cout << '2'; break;
+			case bomberman_objects_e::BOMB_3: std::cout << '3'; break;
+			case bomberman_objects_e::BOMB_4: std::cout << '4'; break;
+			case bomberman_objects_e::BOMB_5: std::cout << '5'; break;
 
 			default:
 				std::cout << (char)map_string[i];
@@ -110,7 +112,7 @@ void server_t::do_accept()
 	});
 }
 
-server_t::server_t(game_logic_t *_game_logic, server_settings_s &_settings, player_list_s &_player_list) :
+server_t::server_t(boost::shared_ptr<game_logic_t> &_game_logic, server_settings_s &_settings, player_list_s &_player_list) :
 	acceptor(io_context, boost::asio::ip::tcp::endpoint(boost::asio::ip::tcp::v4(), _settings.port)),
 	map(_game_logic, _settings.map_settings)
 {

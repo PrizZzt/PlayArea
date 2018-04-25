@@ -6,16 +6,16 @@
 #include "server_action_e.h"
 #include "game_logic_t.h"
 #include "player_t.h"
-#include "server_settings_s.h"
+#include "map_settings_s.h"
 
 class map_t
 {
-	game_logic_t *game_logic;
+	boost::shared_ptr<game_logic_t> game_logic;
 	object_s ***field;
 	uint8_t size_x, size_y;
 
 public:
-	map_t(game_logic_t *_game_logic, server_settings_s::map_settings_s &_settings)
+	map_t(boost::shared_ptr<game_logic_t> &_game_logic, map_settings_s &_settings)
 	{
 		size_x = _settings.size_x;
 		size_y = _settings.size_y;
@@ -40,8 +40,6 @@ public:
 				delete field[j][i];
 			delete[] field[j];
 		}
-
-		delete game_logic;
 	}
 
 	uint8_t get_size_x() { return size_x; }

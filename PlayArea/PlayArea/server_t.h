@@ -30,7 +30,7 @@ class server_t
     void do_accept();
 
 public:
-    server_t(game_logic_t *_game_logic, server_settings_s &_settings, player_list_s &_player_list);
+    server_t(boost::shared_ptr<game_logic_t> &_game_logic, server_settings_s &_settings, player_list_s &_player_list);
     ~server_t();
 
     uint8_t  *get_map_string() { return map_string; }

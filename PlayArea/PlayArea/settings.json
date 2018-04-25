@@ -1,6 +1,7 @@
 {
     "server": {
         "port": "1234",
+        "game_logic_name": "..\\x64\\Debug\\Bomberman.dll",
         "save_players_period": "60",
         "map": {
             "size_x": "20",
