@@ -2,7 +2,11 @@
 
 #include "game_logic_t.h"
 
-class bomberman_logic_t : public game_logic_t
+#include <boost/property_tree/ptree.hpp>
+#include <boost/property_tree/json_parser.hpp>
+#include <boost/filesystem.hpp>
+
+struct bomberman_settings_s
 {
 	int32_t wall_score = 10;
 	int32_t meatchopper_score = 100;
@@ -10,6 +14,41 @@ class bomberman_logic_t : public game_logic_t
 	int32_t player_dead_penalty = 1;
 	int32_t player_score_min = -10;
 	int32_t player_score_max = INT32_MAX - 1;
+
+	void load(const std::string &_filename)
+	{
+		if (boost::filesystem::exists(_filename))
+		{
+			boost::property_tree::ptree tree;
+			boost::property_tree::read_json(_filename, tree);
+
+			wall_score = tree.get<int32_t>("bomberman.wall_score", wall_score);
+			meatchopper_score = tree.get<int32_t>("bomberman.meatchopper_score", meatchopper_score);
+			player_score = tree.get<int32_t>("bomberman.player_score", player_score);
+			player_dead_penalty = tree.get<int32_t>("bomberman.player_dead_penalty", player_dead_penalty);
+			player_score_min = tree.get<int32_t>("bomberman.player_score_min", player_score_min);
+			player_score_max = tree.get<int32_t>("bomberman.player_score_max", player_score_max);
+		}
+	}
+
+	void save(const std::string &_filename)
+	{
+		boost::property_tree::ptree tree;
+
+		tree.put("bomberman.wall_score", wall_score);
+		tree.put("bomberman.meatchopper_score", meatchopper_score);
+		tree.put("bomberman.player_score", player_score);
+		tree.put("bomberman.player_dead_penalty", player_dead_penalty);
+		tree.put("bomberman.player_score_min", player_score_min);
+		tree.put("bomberman.player_score_max", player_score_max);
+
+		boost::property_tree::write_json(_filename, tree);
+	}
+};
+
+class bomberman_logic_t : public game_logic_t
+{
+	bomberman_settings_s settings;
 
 public:
 	enum class objects_e : uint8_t
@@ -123,18 +162,18 @@ public:
 			case objects_e::PLAYER_WITH_BOMB_4:
 			case objects_e::PLAYER_WITH_BOMB_5:
 				if (object->player)
-					object->player->add_score(-player_dead_penalty, player_score_min, player_score_max);
+					object->player->add_score(-settings.player_dead_penalty, settings.player_score_min, settings.player_score_max);
 			case objects_e::DEAD_PLAYER:
 				object->type = (uint8_t)objects_e::DEAD_PLAYER;
 				if (_killer && _killer->object != object)
-					_killer->add_score(player_score, player_score_min, player_score_max);
+					_killer->add_score(settings.player_score, settings.player_score_min, settings.player_score_max);
 				return true;
 
 			case objects_e::MEATCHOPPER:
 			case objects_e::DEAD_MEATCHOPPER:
 				object->type = (uint8_t)objects_e::DEAD_MEATCHOPPER;
 				if (_killer)
-					_killer->add_score(meatchopper_score, player_score_min, player_score_max);
+					_killer->add_score(settings.meatchopper_score, settings.player_score_min, settings.player_score_max);
 				return true;
 
 			case objects_e::BOMB_1:
@@ -150,7 +189,7 @@ public:
 			case objects_e::DESTROYED_WALL:
 				object->type = (uint8_t)objects_e::DESTROYED_WALL;
 				if (_killer)
-					_killer->add_score(wall_score, player_score_min, player_score_max);
+					_killer->add_score(settings.wall_score, settings.player_score_min, settings.player_score_max);
 				return true;
 
 			case objects_e::UNDESTRUCTIBLE_WALL:
@@ -191,7 +230,7 @@ public:
 				{
 					target->type = (uint8_t)objects_e::DEAD_PLAYER;
 					if (target->player)
-						target->player->add_score(-player_dead_penalty, player_score_min, player_score_max);
+						target->player->add_score(-settings.player_dead_penalty, settings.player_score_min, settings.player_score_max);
 					return;
 				}
 			}
@@ -238,6 +277,9 @@ public:
 public:
 	void init(map_t *_map)override
 	{
+		settings.load("bomberman.settings.json");
+		settings.save("bomberman.settings.json");
+
 		for (uint8_t j = 0; j < _map->get_size_y(); j++)
 		{
 			for (uint8_t i = 0; i < _map->get_size_x(); i++)
@@ -446,7 +488,7 @@ public:
 							{
 								object->type = (uint8_t)objects_e::DEAD_PLAYER;
 								if (object->player)
-									object->player->add_score(-player_dead_penalty, player_score_min, player_score_max);
+									object->player->add_score(-settings.player_dead_penalty, settings.player_score_min, settings.player_score_max);
 							}
 							else
 							{

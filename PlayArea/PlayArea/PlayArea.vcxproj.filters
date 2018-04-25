@@ -68,5 +68,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="settings.json" />
+    <None Include="bomberman.settings.json" />
   </ItemGroup>
 </Project>

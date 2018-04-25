@@ -1,0 +1,10 @@
+{
+    "bomberman": {
+        "wall_score": "10",
+        "meatchopper_score": "100",
+        "player_score": "1000",
+        "player_dead_penalty": "1",
+        "player_score_min": "-10",
+        "player_score_max": "2147483646"
+    }
+}
