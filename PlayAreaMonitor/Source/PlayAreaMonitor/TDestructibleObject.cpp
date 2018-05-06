@@ -4,9 +4,11 @@
 
 ATDestructibleObject::ATDestructibleObject()
 {
+	Root = CreateDefaultSubobject<USceneComponent>(TEXT("Root"));
+	RootComponent = Root;
 	Body = CreateDefaultSubobject<UDestructibleComponent>(TEXT("Body"));
+	Body->SetupAttachment(Root);
 
-	RootComponent = Body;
 	PrimaryActorTick.bCanEverTick = true;
 }
 
@@ -29,4 +31,9 @@ void ATDestructibleObject::Destroy()
 void ATDestructibleObject::Renew()
 {
 	Body->SetDestructibleMesh(mesh);
+}
+
+void ATDestructibleObject::SetRotation(FRotator &_rotation)
+{
+	Body->SetWorldRotation(_rotation);
 }

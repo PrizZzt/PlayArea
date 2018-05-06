@@ -87,4 +87,6 @@ public:
 			return 0;
 		}
 	}
+
+	virtual void SetRotation(FRotator &_rotation);
 };

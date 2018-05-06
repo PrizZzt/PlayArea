@@ -19,7 +19,8 @@ void ATObject::BeginPlay()
 	Super::BeginPlay();
 	gameInstance = (UTGameInstance*)GetWorld()->GetGameInstance();
 
-	SetActorRotation(FRotator(0, FMath::RandHelper(4) * 90, 0));
+	FRotator rotation(0, FMath::RandHelper(4) * 90, 0);
+	SetRotation(rotation);
 }
 
 void ATObject::Tick(float DeltaTime)
@@ -42,7 +43,7 @@ void ATObject::Tick(float DeltaTime)
 		{
 			FVector dir = (target - pos).GetSafeNormal();
 			FRotator rot = FMatrix(dir, FVector(-dir.Y, dir.X, dir.Z), FVector::UpVector, FVector::ZeroVector).Rotator();
-			SetActorRotation(rot);
+			SetRotation(rot);
 
 			if (distSquared <= 10000)
 			{
@@ -75,4 +76,9 @@ void ATObject::SetType(int _type)
 		if (is_resurrect_type)
 			SetActorLocation(FVector(ToX * 100, ToY * 100, 0));
 	}
+}
+
+void ATObject::SetRotation(FRotator &_rotation)
+{
+	SetActorRotation(_rotation);
 }

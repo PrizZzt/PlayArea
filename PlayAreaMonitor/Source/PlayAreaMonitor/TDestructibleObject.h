@@ -15,11 +15,12 @@ class PLAYAREAMONITOR_API ATDestructibleObject : public ATObject
 {
 	GENERATED_BODY()
 
-private:
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
+public:
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
+		class USceneComponent *Root;
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
 		class UDestructibleComponent *Body;
 
-public:
 	UDestructibleMesh *mesh;
 
 	ATDestructibleObject();
@@ -31,4 +32,6 @@ public:
 		void Destroy();
 	UFUNCTION(BlueprintCallable)
 		void Renew();
+
+	void SetRotation(FRotator &_rotation)override;
 };

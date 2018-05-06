@@ -10,7 +10,7 @@ ATSpectator::ATSpectator()
 	RootComponent = Collision;
 
 	Camera = CreateDefaultSubobject<UCameraComponent>(TEXT("Camera"));
-	Camera->AttachTo(RootComponent);
+	Camera->SetupAttachment(RootComponent);
 
 	Movement = CreateDefaultSubobject<UFloatingPawnMovement>(TEXT("Movement"));
 	Movement->UpdatedComponent = RootComponent;

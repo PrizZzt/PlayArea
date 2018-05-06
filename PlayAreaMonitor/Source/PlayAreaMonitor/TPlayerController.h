@@ -19,6 +19,7 @@ class PLAYAREAMONITOR_API ATPlayerController : public APlayerController
 
 public:
 	UUserWidget *PointsTable;
+	AActor *Director;
 
 	ELookType LookType;
 	bool ManualControl;

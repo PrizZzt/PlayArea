@@ -4,10 +4,12 @@
 #include "Engine.h"
 #include "UserWidget.h"
 #include "TSpectator.h"
+#include "TDirector.h"
 
 ATPlayerController::ATPlayerController()
 {
 	gameInstance = nullptr;
+	Director = nullptr;
 }
 
 void ATPlayerController::BeginPlay()
@@ -83,6 +85,11 @@ void ATPlayerController::MouseLookX(float _scale)
 		case ELookType::LT_MANUAL:
 			AddYawInput(100.f * _scale * GetWorld()->GetDeltaSeconds());
 			break;
+
+		case ELookType::LT_PLAYER:
+			Director->AddActorLocalRotation(FRotator(0, 100.f * _scale * GetWorld()->GetDeltaSeconds(), 0));
+			SetControlRotation((gameInstance->objects[indexOfPlayerToAttach]->GetActorLocation() - GetPawn()->GetActorLocation()).Rotation());
+			break;
 		}
 		FRotator r = GetPawn()->GetActorRotation();
 		GEngine->AddOnScreenDebugMessage(-1, 1.0f, FColor::Blue, "Pitch=" + FString::FromInt(r.Pitch) + "Yaw=" + FString::FromInt(r.Yaw) + "Roll=" + FString::FromInt(r.Roll));
@@ -126,12 +133,24 @@ void ATPlayerController::SetStaticLook()
 
 	GetPawn()->SetActorLocation(FVector(size / 2 - 50, size / 2 - 50, size + 200));
 	SetControlRotation(FRotator(-90.0f, 0.0f, 0.0f));
+
+	if (Director)
+	{
+		Director->Destroy();
+		Director = nullptr;
+	}
 }
 
 void ATPlayerController::SetManualLook()
 {
 	LookType = ELookType::LT_MANUAL;
 	GetPawn()->DetachFromActor(FDetachmentTransformRules(EDetachmentRule::KeepRelative, true));
+
+	if (Director)
+	{
+		Director->Destroy();
+		Director = nullptr;
+	}
 }
 
 void ATPlayerController::SetPlayerLook()
@@ -148,5 +167,16 @@ void ATPlayerController::SetPlayerLook()
 			indexOfPlayerToAttach = gameInstance->GetNextPlayerIndex(indexOfPlayerToAttach);
 	}
 	playerToAttach = gameInstance->objects[indexOfPlayerToAttach];
-	GetPawn()->AttachToActor(playerToAttach, FAttachmentTransformRules(EAttachmentRule::KeepWorld, EAttachmentRule::KeepWorld, EAttachmentRule::KeepWorld, true));
+
+	if (Director == nullptr)
+	{
+		Director = GetWorld()->SpawnActor<ATDirector>(ATDirector::StaticClass(), playerToAttach->GetActorLocation(), FRotator::ZeroRotator);
+	}
+	Director->AttachToActor(playerToAttach, FAttachmentTransformRules(EAttachmentRule::KeepWorld, EAttachmentRule::KeepWorld, EAttachmentRule::KeepWorld, true));
+	Director->SetActorRelativeLocation(FVector(0, 0, 0));
+	GetPawn()->AttachToActor(Director, FAttachmentTransformRules(EAttachmentRule::KeepRelative, EAttachmentRule::KeepRelative, EAttachmentRule::KeepRelative, true));
+	GetPawn()->SetActorRelativeLocation(FVector(500, 500, 700));
+	SetControlRotation((playerToAttach->GetActorLocation() - GetPawn()->GetActorLocation()).Rotation());
+
+	GEngine->AddOnScreenDebugMessage(-1, 10.0f, FColor::Blue, "PLAYER");
 }
