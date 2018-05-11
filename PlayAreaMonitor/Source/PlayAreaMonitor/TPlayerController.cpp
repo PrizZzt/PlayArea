@@ -79,9 +79,6 @@ void ATPlayerController::MouseLookX(float _scale)
 		switch (LookType)
 		{
 		case ELookType::LT_STATIC:
-			AddYawInput(100.f * _scale * GetWorld()->GetDeltaSeconds());
-			break;
-
 		case ELookType::LT_MANUAL:
 			AddYawInput(100.f * _scale * GetWorld()->GetDeltaSeconds());
 			break;
@@ -98,9 +95,23 @@ void ATPlayerController::MouseLookX(float _scale)
 
 void ATPlayerController::MouseLookY(float _scale)
 {
-	if (ManualControl && _scale != 0.0f && LookType == ELookType::LT_MANUAL)
+	if (ManualControl && _scale != 0.0f)
 	{
-		AddPitchInput(100.f * -_scale * GetWorld()->GetDeltaSeconds());
+		switch (LookType)
+		{
+		case ELookType::LT_STATIC:
+			break;
+
+		case ELookType::LT_MANUAL:
+			AddPitchInput(100.f * -_scale * GetWorld()->GetDeltaSeconds());
+			break;
+
+		case ELookType::LT_PLAYER:
+			Director->Turret->AddRelativeRotation(FRotator(0, 0, 100.f * _scale * GetWorld()->GetDeltaSeconds()));
+			SetControlRotation((gameInstance->objects[indexOfPlayerToAttach]->GetActorLocation() - GetPawn()->GetActorLocation()).Rotation());
+			break;
+		}
+
 		FRotator r = GetPawn()->GetActorRotation();
 		GEngine->AddOnScreenDebugMessage(-1, 1.0f, FColor::Blue, "Pitch=" + FString::FromInt(r.Pitch) + "Yaw=" + FString::FromInt(r.Yaw) + "Roll=" + FString::FromInt(r.Roll));
 	}
@@ -174,8 +185,8 @@ void ATPlayerController::SetPlayerLook()
 	}
 	Director->AttachToActor(playerToAttach, FAttachmentTransformRules(EAttachmentRule::KeepWorld, EAttachmentRule::KeepWorld, EAttachmentRule::KeepWorld, true));
 	Director->SetActorRelativeLocation(FVector(0, 0, 0));
-	GetPawn()->AttachToActor(Director, FAttachmentTransformRules(EAttachmentRule::KeepRelative, EAttachmentRule::KeepRelative, EAttachmentRule::KeepRelative, true));
-	GetPawn()->SetActorRelativeLocation(FVector(500, 500, 700));
+	GetPawn()->AttachToComponent(Director->Turret, FAttachmentTransformRules(EAttachmentRule::KeepRelative, EAttachmentRule::KeepRelative, EAttachmentRule::KeepRelative, true));
+	GetPawn()->SetActorRelativeLocation(FVector(0, 500, 700));
 	SetControlRotation((playerToAttach->GetActorLocation() - GetPawn()->GetActorLocation()).Rotation());
 
 	GEngine->AddOnScreenDebugMessage(-1, 10.0f, FColor::Blue, "PLAYER");

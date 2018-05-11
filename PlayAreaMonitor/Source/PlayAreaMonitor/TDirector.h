@@ -11,7 +11,9 @@ class PLAYAREAMONITOR_API ATDirector : public AActor
 {
 	GENERATED_BODY()
 	
-public:	
+public:
+	UPROPERTY(BlueprintReadOnly, VisibleAnywhere)
+		USceneComponent *Turret;
 	ATDirector();
 	void BeginPlay() override;
 };

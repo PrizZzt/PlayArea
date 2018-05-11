@@ -6,6 +6,7 @@
 #include "GameFramework/PlayerController.h"
 #include "TGameInstance.h"
 #include "ELookType.h"
+#include "TDirector.h"
 #include "TPlayerController.generated.h"
 
 /**
@@ -19,7 +20,7 @@ class PLAYAREAMONITOR_API ATPlayerController : public APlayerController
 
 public:
 	UUserWidget *PointsTable;
-	AActor *Director;
+	ATDirector *Director;
 
 	ELookType LookType;
 	bool ManualControl;
