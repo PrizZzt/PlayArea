@@ -66,7 +66,7 @@ void ATObject::SetTarget(int _X, int _Y)
 
 void ATObject::SetType(int _type)
 {
-	if (Type != _type && gameInstance)
+	if (Type != _type)
 	{
 		if (Type != 0)
 			SetType_BP(_type, Type);
