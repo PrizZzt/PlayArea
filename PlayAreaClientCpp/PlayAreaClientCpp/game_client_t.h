@@ -1,14 +1,15 @@
 #pragma once
 
-#include <boost/asio.hpp>
+#include <functional>
+#include <winsock2.h>
+#include <WS2tcpip.h>
+#pragma comment(lib, "ws2_32.lib")
+
 #include "bomberman_objects_e.h"
 
 class game_client_t
 {
-	boost::asio::io_context io_context;
-
-	boost::asio::ip::tcp::socket socket;
-	boost::asio::ip::tcp::resolver resolver;
+	SOCKET s;
 
 	uint8_t message[2];
 
